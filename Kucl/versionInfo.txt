@@ -1,0 +1,49 @@
+﻿
+1.0.6.0
+ バージョンごとの変更点を記録するVersionInfo.txtを追加
+ FileDocument.OnDisposeメソッドを追加
+ AppMainBase.UseConfigプロパティを追加
+ AppMainBase.UseExDLLプロパティを追加
+
+1.0.7.0
+  Kucl.xml名前空間を追加
+  Configパッケージを拡張し、XmlConfigパッケージを作成
+  Configパッケージは互換性のため残す。
+  
+
+1.0.8.0
+  2015用としてverUP
+  XmlContentsPackage.Loadの第二引数packageNameを削除
+
+1.08.01
+  2017用
+  ConfigパッケージにObsolute属性を追加
+
+1.08.02
+  AppMainBaseにDoWriteLogOnStartプロパティを追加。
+  OnErrorAtOnStartでのエラーをログファイルに書き込めるようにした。
+
+1.08.03
+  SequentialNumberGeneratorのmin,maxに関するバグ修正
+  IsRegisteredメソッドを追加
+
+1.09.00
+  Kucl.Forms.Controls名前空間を追加
+  IEditableControl,IOperationListControlインターフェースを追加
+
+1.09.10
+  CombinedCommandを追加
+  Kucl.TreeにPredicateを指定するFindメソッドを追加
+  Kucl.TreeにFindAllメソッドを追加
+  Kucl.TreeItemにPredicateを指定するFindメソッドを追加
+  Kucl.TreeItemにFindAllメソッドを追加
+  
+1.09.11
+  Kucl.TreeItemのFindAllメソッドの不具合吸収（StackOverflowException発生）
+
+1.09.12
+  Kucl.Xml.XmlCfg.UseConfigHelper.GetXmlContentsItemでKeyNotFoundExceptionが発生する不具合吸収
+　  ・Kucl.Xml.XmlContentsModel.GetXmlContentsItemで項目が存在しない場合、KeyNotFoundExceptionが発生していたが、ArgumentExceptionで統一
+  　・コレクション等、動的に要素が増える場合、DefaultConfigにも存在せず、ArgumentExceptionが発生してしまうため、
+  　　Get***FromConfigメソッドに、読み込み時にデフォルト要素を指定するオーバーロードを追加
+
