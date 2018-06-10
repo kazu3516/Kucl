@@ -47,3 +47,6 @@
   　・コレクション等、動的に要素が増える場合、DefaultConfigにも存在せず、ArgumentExceptionが発生してしまうため、
   　　Get***FromConfigメソッドに、読み込み時にデフォルト要素を指定するオーバーロードを追加
 
+1.1.0.0
+  GitHubに公開
+  ListOperationクラスを追加

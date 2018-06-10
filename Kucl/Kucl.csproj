@@ -70,6 +70,7 @@
     <Compile Include="Collection\CustomCollection.cs" />
     <Compile Include="Forms\Controls\IEditableControl.cs" />
     <Compile Include="Forms\Controls\IOperationListControl.cs" />
+    <Compile Include="Forms\Controls\ListOperation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SequentialNumberGenerator.cs" />
     <Compile Include="Tree.cs" />
