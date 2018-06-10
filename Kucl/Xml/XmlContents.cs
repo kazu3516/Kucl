@@ -8,6 +8,10 @@ using System.Linq;
 
 namespace Kucl.Xml {
 
+    //TODO:ファイルフォーマットのバージョンを含めることができるように変更する
+    //TODO:ファイルフォーマットのバージョンにより入出力を切り替えできるようにする
+
+
     #region XmlContentsPath
     /// <summary>
     /// XmlContentsのパスを表すクラスです。

@@ -131,7 +131,6 @@ namespace Kucl.Test {
             //bool openFile = args.Length > 1;
             //openFile = true;
             //if (openFile) {
-            //    //HACK:コマンドライン引数の扱いを見直し(現状はコマンドラインスイッチは無い)
             //    string filename = args[1];
             //    //string filename = string.Format("{0}\\test1.xml", this.m_DataDirectory);
 
