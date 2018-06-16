@@ -1226,9 +1226,8 @@ namespace Kucl.Xml {
         }
         #endregion
 
-
         #region フィールド(メンバ変数、プロパティ、イベント)
-
+        protected Dictionary<XmlContentsItemType, Func<string, XmlContentsItem>> m_GenerateItemTable;
         #endregion
 
         #region コンストラクタ
@@ -1236,11 +1235,15 @@ namespace Kucl.Xml {
         /// XmlContentsItemProviderクラスの新しいインスタンスを初期化します。
         /// </summary>
         public XmlContentsItemProvider() {
+            //型解決テーブルの初期化
+            this.m_GenerateItemTable = new Dictionary<XmlContentsItemType, Func<string, XmlContentsItem>>() {
+                { XmlContentsItemType.Container,this.CreateContainerXmlContentsItem },
+                { XmlContentsItemType.Bool,this.CreateBoolXmlContentsItem },
+                { XmlContentsItemType.String,this.CreateStringXmlContentsItem},
+                { XmlContentsItemType.Int,this.CreateIntXmlContentsItem},
+                { XmlContentsItemType.Double,this.CreateDoubleXmlContentsItem},
+            };
         }
-        #endregion
-
-        #region イベントハンドラ
-
         #endregion
 
         #region ファイル入出力
@@ -1299,6 +1302,8 @@ namespace Kucl.Xml {
 
 
         #region virtualメソッド
+
+        #region CreateContainerXmlContentsItem
         /// <summary>
         /// ContainerXmlContentsItemを生成するメソッドです。
         /// 派生クラスで実装する場合、ContainerXmlContentsItemクラスの派生クラスのインスタンスを生成します。
@@ -1311,6 +1316,10 @@ namespace Kucl.Xml {
                 ItemProvider = this
             };
         }
+
+        #endregion
+
+        #region CreateBoolXmlContentsItem
         /// <summary>
         /// BoolXmlContentsItemを生成するメソッドです。
         /// 派生クラスで実装する場合、BoolXmlContentsItemクラスの派生クラスのインスタンスを生成します。
@@ -1321,6 +1330,12 @@ namespace Kucl.Xml {
         public virtual BoolXmlContentsItem CreateBoolXmlContentsItem(string name, bool value) {
             return new BoolXmlContentsItem(name, value);
         }
+        private BoolXmlContentsItem CreateBoolXmlContentsItem(string name) {
+            return this.CreateBoolXmlContentsItem(name, false);
+        }
+        #endregion
+
+        #region CreateStringXmlContentsItem
         /// <summary>
         /// StringXmlContentsItemを生成するメソッドです。
         /// 派生クラスで実装する場合、StringXmlContentsItemクラスの派生クラスのインスタンスを生成します。
@@ -1331,6 +1346,13 @@ namespace Kucl.Xml {
         public virtual StringXmlContentsItem CreateStringXmlContentsItem(string name, string value) {
             return new StringXmlContentsItem(name, value);
         }
+        private StringXmlContentsItem CreateStringXmlContentsItem(string name) {
+            return this.CreateStringXmlContentsItem(name, "");
+        }
+
+        #endregion
+
+        #region CreateIntXmlContentsItem
         /// <summary>
         /// IntXmlContentsItemを生成するメソッドです。
         /// 派生クラスで実装する場合、IntXmlContentsItemクラスの派生クラスのインスタンスを生成します。
@@ -1341,6 +1363,13 @@ namespace Kucl.Xml {
         public virtual IntXmlContentsItem CreateIntXmlContentsItem(string name, int value) {
             return new IntXmlContentsItem(name, value);
         }
+        private IntXmlContentsItem CreateIntXmlContentsItem(string name) {
+            return this.CreateIntXmlContentsItem(name, 0);
+        }
+
+        #endregion
+
+        #region CreateDoubleXmlContentsItem
         /// <summary>
         /// DoubleXmlContentsItemを生成するメソッドです。
         /// 派生クラスで実装する場合、DoubleXmlContentsItemクラスの派生クラスのインスタンスを生成します。
@@ -1351,6 +1380,11 @@ namespace Kucl.Xml {
         public virtual DoubleXmlContentsItem CreateDoubleXmlContentsItem(string name, double value) {
             return new DoubleXmlContentsItem(name, value);
         }
+        private DoubleXmlContentsItem CreateDoubleXmlContentsItem(string name) {
+            return this.CreateDoubleXmlContentsItem(name, 0.0);
+        }
+
+        #endregion
 
         #endregion
 
@@ -1362,30 +1396,12 @@ namespace Kucl.Xml {
         /// <param name="name"></param>
         /// <returns></returns>
         public XmlContentsItem GenerateItem(XmlContentsItemType type, string name) {
-            XmlContentsItem item;
-            switch (type) {
-                case XmlContentsItemType.Container:
-                    item = this.CreateContainerXmlContentsItem(name);
-                    break;
-                case XmlContentsItemType.Bool:
-                    item = this.CreateBoolXmlContentsItem(name, false);
-                    break;
-                case XmlContentsItemType.String:
-                    item = this.CreateStringXmlContentsItem(name, "");
-                    break;
-                case XmlContentsItemType.Int:
-                    item = this.CreateIntXmlContentsItem(name, 0);
-                    break;
-                case XmlContentsItemType.Double:
-                    item = this.CreateDoubleXmlContentsItem(name, 0.0);
-                    break;
-                default:
-                    throw new ArgumentException("不明なXmlContentsItemTypeが指定されました。");
+            if (this.m_GenerateItemTable.ContainsKey(type)) {
+                return this.m_GenerateItemTable[type](name);
             }
-            return item;
+            throw new ArgumentException("不明なXmlContentsItemTypeが指定されました。");
         }
         #endregion
-
 
     }
     #endregion
