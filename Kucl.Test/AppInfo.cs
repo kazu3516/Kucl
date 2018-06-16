@@ -29,6 +29,23 @@ namespace Kucl.Test {
         #endregion
 
 
+        #region Location
+        private System.Drawing.Point m_Location;
+        /// <summary>
+        /// Locationを取得、設定します。
+        /// </summary>
+        public System.Drawing.Point Location {
+            get {
+                return this.m_Location;
+            }
+            set {
+                this.m_Location = value;
+            }
+        }
+        #endregion
+
+
+
         #endregion
 
         #region コンストラクタ
@@ -96,6 +113,9 @@ namespace Kucl.Test {
 
             this.m_Name = this.m_ConfigHelper.GetStringValue("Kucl.setting:Common.Name");
 
+            int x = this.m_ConfigHelper.GetIntValue("Kucl.setting:Common.Location.X");
+            int y = this.m_ConfigHelper.GetIntValue("Kucl.setting:Common.Location.Y");
+            this.m_Location = new System.Drawing.Point(x, y);
 
         }
 
@@ -103,14 +123,16 @@ namespace Kucl.Test {
         //Configの更新
         private void OnReflectConfig(XmlConfigModel config) {
             config.AddXmlContentsItem("Kucl.setting:Common.Name", this.m_Name);
-
+            config.AddXmlContentsItem("Kucl.setting:Common.Location.X", this.m_Location.X);
+            config.AddXmlContentsItem("Kucl.setting:Common.Location.Y", this.m_Location.Y);
 
         }
 
         //既定のConfig
         private void OnCreateDefaultConfig(XmlConfigModel config) {
             config.AddXmlContentsItem("Kucl.setting:Common.Name", "SAMPLE_NAME");
-
+            config.AddXmlContentsItem("Kucl.setting:Common.Location.X", 10);
+            config.AddXmlContentsItem("Kucl.setting:Common.Location.Y", 20);
 
         }
 
