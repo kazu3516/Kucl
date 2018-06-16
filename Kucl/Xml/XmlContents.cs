@@ -20,17 +20,11 @@ namespace Kucl.Xml {
     /// (例)package1.package2.package3:path1.path2.path3…
     /// </summary>
     public class XmlContentsPath {
+
+        #region メンバ変数、プロパティ
+
+        #region PackageName
         private string[] m_PackageName;
-        private string[] m_Path;
-        /// <summary>
-        /// XmlContentsPathオブジェクトの新しいインスタンスを初期化します。
-        /// </summary>
-        /// <param name="package"></param>
-        /// <param name="items"></param>
-        public XmlContentsPath(string[] package,string[] items) {
-            this.m_PackageName = package;
-            this.m_Path = items;
-        }
         /// <summary>
         /// パッケージ名を取得します。
         /// </summary>
@@ -39,6 +33,10 @@ namespace Kucl.Xml {
                 return m_PackageName;
             }
         }
+        #endregion
+
+        #region Path
+        private string[] m_Path;
         /// <summary>
         /// パス名を取得します。
         /// </summary>
@@ -46,6 +44,33 @@ namespace Kucl.Xml {
             get {
                 return m_Path;
             }
+        }
+        #endregion
+
+        #endregion
+
+        #region コンストラクタ
+        /// <summary>
+        /// XmlContentsPathオブジェクトの新しいインスタンスを初期化します。
+        /// </summary>
+        /// <param name="package"></param>
+        /// <param name="items"></param>
+        public XmlContentsPath(string[] package, string[] items) {
+            this.m_PackageName = package;
+            this.m_Path = items;
+        }
+        #endregion
+
+        public string GetPackageNameString() {
+            return XmlContentsPathProvider.GetPathString(this.m_PackageName);
+        }
+
+        public string GetContentsRootPath() {
+            return this.m_Path[0];
+        }
+
+        public string GetItemName() {
+            return this.m_Path[this.m_Path.Length - 1];
         }
     }
 
@@ -56,6 +81,8 @@ namespace Kucl.Xml {
     /// 文字列からXmlContentsPathを生成するクラスです。
     /// </summary>
     public static class XmlContentsPathProvider {
+
+        #region 定数
         /// <summary>
         /// 階層を区切る文字列'.'を表します。
         /// </summary>
@@ -64,6 +91,10 @@ namespace Kucl.Xml {
         /// XmlContentsとPackageを区切る文字列':'を表します。
         /// </summary>
         public const char PackageDelimiterChar = ':';
+
+        #endregion
+
+        #region GetPathString
         /// <summary>
         /// パス形式の文字列を生成します。
         /// 文字列配列はDelimiterCharで連結されます。
@@ -71,8 +102,11 @@ namespace Kucl.Xml {
         /// <param name="path"></param>
         /// <returns></returns>
         public static string GetPathString(string[] path) {
-            return string.Join(XmlContentsPathProvider.DelimiterChar.ToString(),path);
+            return string.Join(XmlContentsPathProvider.DelimiterChar.ToString(), path);
         }
+        #endregion
+
+        #region GetXmlContentsPath
         /// <summary>
         /// 完全パスからXmlContentsPathオブジェクトを生成します。
         /// パッケージ名を含まないパスを指定された場合、
@@ -82,16 +116,18 @@ namespace Kucl.Xml {
         /// <param name="completePath"></param>
         /// <returns></returns>
         public static XmlContentsPath GetXmlContentsPath(string completePath) {
-            if(!completePath.Contains(XmlContentsPathProvider.PackageDelimiterChar.ToString())) {
+            if (!completePath.Contains(XmlContentsPathProvider.PackageDelimiterChar.ToString())) {
                 //パッケージ名が含まれない不完全パスを指定された場合、パス名のみを返す。
                 return XmlContentsPathProvider.GetXmlContentsPathWithoutPackageName(completePath);
             }
-            string[] path = completePath.Split(new char[] { XmlContentsPathProvider.PackageDelimiterChar },2);
+            string[] path = completePath.Split(new char[] { XmlContentsPathProvider.PackageDelimiterChar }, 2);
             string[] path1 = path[0].Split(XmlContentsPathProvider.DelimiterChar);
             string[] path2 = path[1].Split(XmlContentsPathProvider.DelimiterChar);
-            return new XmlContentsPath(path1,path2);
+            return new XmlContentsPath(path1, path2);
         }
+        #endregion
 
+        #region GetXmlContentsPathWithoutPackageName
         /// <summary>
         /// XmlContentsから生成される不完全パスからXmlContentsPathを生成。
         /// Packagenameは考慮しない。
@@ -100,13 +136,15 @@ namespace Kucl.Xml {
         /// <returns></returns>
         public static XmlContentsPath GetXmlContentsPathWithoutPackageName(string path) {
             string targetPath = path;
-            if(path.Contains(XmlContentsPathProvider.PackageDelimiterChar.ToString())) {
+            if (path.Contains(XmlContentsPathProvider.PackageDelimiterChar.ToString())) {
                 //packageNameが含まれている場合、パス名のみ抽出
                 targetPath = path.Substring(path.IndexOf(XmlContentsPathProvider.PackageDelimiterChar) + 1);
             }
             string[] path1 = targetPath.Split(XmlContentsPathProvider.DelimiterChar);
-            return new XmlContentsPath(new string[] { },path1);
+            return new XmlContentsPath(new string[] { }, path1);
         }
+        #endregion
+
     }
     #endregion
 
@@ -119,7 +157,7 @@ namespace Kucl.Xml {
     public class XmlContentsModel {
 
         #region メンバ変数
-        private Dictionary<string,XmlContentsPackage> m_Packages;
+        private Dictionary<string, XmlContentsPackage> m_Packages;
 
         private bool m_DoClearFileOnSave;
 
@@ -154,7 +192,7 @@ namespace Kucl.Xml {
         /// <summary>
         /// 名前とXmlContentsPackageを関連付けたハッシュテーブルを取得します。
         /// </summary>
-        public Dictionary<string,XmlContentsPackage> Packages {
+        public Dictionary<string, XmlContentsPackage> Packages {
             get {
                 return m_Packages;
             }
@@ -167,7 +205,7 @@ namespace Kucl.Xml {
         /// XmlContentsModelクラスの新しいインスタンスを初期化します。
         /// </summary>
         public XmlContentsModel() {
-            this.m_Packages = new Dictionary<string,XmlContentsPackage>();
+            this.m_Packages = new Dictionary<string, XmlContentsPackage>();
         }
         #endregion
 
@@ -177,11 +215,11 @@ namespace Kucl.Xml {
         /// </summary>
         /// <param name="package"></param>
         public void AddPackage(XmlContentsPackage package) {
-            if(this.m_Packages.ContainsKey(package.Name)) {
+            if (this.m_Packages.ContainsKey(package.Name)) {
                 this.m_Packages[package.Name] = package;
             }
             else {
-                this.m_Packages.Add(package.Name,package);
+                this.m_Packages.Add(package.Name, package);
             }
         }
         #endregion
@@ -213,7 +251,7 @@ namespace Kucl.Xml {
         /// <param name="name"></param>
         /// <returns></returns>
         public XmlContentsPackage GetPackage(string name) {
-            if(this.m_Packages.ContainsKey(name)) {
+            if (this.m_Packages.ContainsKey(name)) {
                 return this.m_Packages[name];
             }
             else {
@@ -240,11 +278,12 @@ namespace Kucl.Xml {
         /// <param name="path"></param>
         /// <returns></returns>
         public XmlContentsItem GetXmlContentsItem(XmlContentsPath path) {
-            string package = XmlContentsPathProvider.GetPathString(path.PackageName);
-            if(this.m_Packages.ContainsKey(package)) {
-                if(this.m_Packages[package].Contains(path.Path[0])) {
+            string packageName = path.GetPackageNameString();
+            string contentsName = path.GetContentsRootPath();
+            if (this.m_Packages.ContainsKey(packageName)) {
+                if (this.m_Packages[packageName].Contains(contentsName)) {
                     try {
-                        return this.m_Packages[package][path.Path[0]].GetXmlContentsItem(path);
+                        return this.m_Packages[packageName][contentsName].GetXmlContentsItem(path);
                     }
                     catch {
                         //例外発生時は何もせず抜けて、メソッド末尾でArgumentExceptionを発生させる
@@ -261,44 +300,44 @@ namespace Kucl.Xml {
         /// </summary>
         /// <param name="name"></param>
         /// <param name="value"></param>
-        public void AddXmlContentsItem(string name,bool value) {
+        public void AddXmlContentsItem(string name, bool value) {
             XmlContentsPath path = XmlContentsPathProvider.GetXmlContentsPath(name);
-            string packageName = XmlContentsPathProvider.GetPathString(path.PackageName);
+            string packageName = path.GetPackageNameString();
             XmlContentsPackage package = this.GetPackage(packageName);
-            package.AddXmlContentsItem(name,value);
+            package.AddXmlContentsItem(name, value);
         }
         /// <summary>
         /// 名前を指定して、設定に文字列を追加します。
         /// </summary>
         /// <param name="name"></param>
         /// <param name="value"></param>
-        public void AddXmlContentsItem(string name,string value) {
+        public void AddXmlContentsItem(string name, string value) {
             XmlContentsPath path = XmlContentsPathProvider.GetXmlContentsPath(name);
-            string packageName = XmlContentsPathProvider.GetPathString(path.PackageName);
+            string packageName = path.GetPackageNameString();
             XmlContentsPackage package = this.GetPackage(packageName);
-            package.AddXmlContentsItem(name,value);
+            package.AddXmlContentsItem(name, value);
         }
         /// <summary>
         /// 名前を指定して、設定に整数値を追加します。
         /// </summary>
         /// <param name="name"></param>
         /// <param name="value"></param>
-        public void AddXmlContentsItem(string name,int value) {
+        public void AddXmlContentsItem(string name, int value) {
             XmlContentsPath path = XmlContentsPathProvider.GetXmlContentsPath(name);
-            string packageName = XmlContentsPathProvider.GetPathString(path.PackageName);
+            string packageName = path.GetPackageNameString();
             XmlContentsPackage package = this.GetPackage(packageName);
-            package.AddXmlContentsItem(name,value);
+            package.AddXmlContentsItem(name, value);
         }
         /// <summary>
         /// 名前を指定して、設定に実数値を追加します。
         /// </summary>
         /// <param name="name"></param>
         /// <param name="value"></param>
-        public void AddXmlContentsItem(string name,double value) {
+        public void AddXmlContentsItem(string name, double value) {
             XmlContentsPath path = XmlContentsPathProvider.GetXmlContentsPath(name);
-            string packageName = XmlContentsPathProvider.GetPathString(path.PackageName);
+            string packageName = path.GetPackageNameString();
             XmlContentsPackage package = this.GetPackage(packageName);
-            package.AddXmlContentsItem(name,value);
+            package.AddXmlContentsItem(name, value);
         }
 
         /// <summary>
@@ -306,24 +345,21 @@ namespace Kucl.Xml {
         /// </summary>
         /// <param name="name"></param>
         /// <param name="item"></param>
-        public void AddXmlContentsItem(string name,XmlContentsItem item) {
+        public void AddXmlContentsItem(string name, XmlContentsItem item) {
             XmlContentsPath path = XmlContentsPathProvider.GetXmlContentsPath(name);
-            this.AddXmlContentsItem(path,item);
+            this.AddXmlContentsItem(path, item);
         }
         /// <summary>
         /// XmlContentsPathを指定して、設定にXmlContentsItemを追加します。
         /// </summary>
         /// <param name="path"></param>
         /// <param name="item"></param>
-        public void AddXmlContentsItem(XmlContentsPath path,XmlContentsItem item) {
-            string packageName = XmlContentsPathProvider.GetPathString(path.PackageName);
+        public void AddXmlContentsItem(XmlContentsPath path, XmlContentsItem item) {
+            string packageName = path.GetPackageNameString();
             XmlContentsPackage package = this.GetPackage(packageName);
-            package.AddXmlContentsItem(path,item);
+            package.AddXmlContentsItem(path, item);
         }
 
-        private string GetItemName(XmlContentsPath path) {
-            return path.Path[path.Path.Length - 1];
-        }
         #endregion
 
         #region ContainsXmlContentsItem
@@ -342,10 +378,11 @@ namespace Kucl.Xml {
         /// <param name="path"></param>
         /// <returns></returns>
         public bool ContainsXmlContentsItem(XmlContentsPath path) {
-            string packageName = XmlContentsPathProvider.GetPathString(path.PackageName);
+            string packageName = path.GetPackageNameString();
+            string contentsName = path.GetContentsRootPath();
             return this.m_Packages.ContainsKey(packageName) &&
-                this.m_Packages[packageName].Contains(path.Path[0]) &&
-                this.m_Packages[packageName][path.Path[0]].Contains(path);
+                this.m_Packages[packageName].Contains(contentsName) &&
+                this.m_Packages[packageName][contentsName].Contains(path);
         }
         #endregion
 
@@ -355,28 +392,28 @@ namespace Kucl.Xml {
         /// </summary>
         /// <param name="dirName"></param>
         public virtual void Load(string dirName) {
-            this.OnLoad(dirName,"");
+            this.OnLoad(dirName, "");
         }
         /// <summary>
         /// 指定したディレクトリからXmlContentsをロードします。
         /// </summary>
         /// <param name="dirName">XmlContentsをロードするディレクトリ</param>
         /// <param name="packageName">指定したディレクトリが含まれるパッケージ。ルートパッケージの場合は空文字列です。</param>
-        private void OnLoad(string dirName,string packageName) {
-            if(!Directory.Exists(dirName)) {
-                throw new DirectoryNotFoundException(string.Format("指定したディレクトリは存在しません。\r\n{0}\r\n",dirName));
+        private void OnLoad(string dirName, string packageName) {
+            if (!Directory.Exists(dirName)) {
+                throw new DirectoryNotFoundException(string.Format("指定したディレクトリは存在しません。\r\n{0}\r\n", dirName));
             }
-            foreach(string filename in Directory.GetFiles(dirName,"*.xml")) {
+            foreach (string filename in Directory.GetFiles(dirName, "*.xml")) {
                 string pName = packageName != "" ? packageName + "." : "";
                 pName += Path.GetFileNameWithoutExtension(filename);
                 XmlContentsPackage package = this.CreateXmlContentsPackage(pName);
-                package.Load(Path.Combine(dirName,filename));
+                package.Load(Path.Combine(dirName, filename));
                 this.AddPackage(package);
             }
-            foreach(string dir in Directory.GetDirectories(dirName)) {
+            foreach (string dir in Directory.GetDirectories(dirName)) {
                 string pName = packageName != "" ? "." : "";
                 pName += Path.GetFileNameWithoutExtension(dir);
-                this.OnLoad(dir,pName);
+                this.OnLoad(dir, pName);
             }
         }
 
@@ -386,31 +423,31 @@ namespace Kucl.Xml {
         /// <param name="dirName"></param>
         public virtual void Save(string dirName) {
             //すべて削除してから保存(不要ファイルが残るため)
-            if(this.m_DoClearFileOnSave) {
-                foreach(string filename in Directory.GetFiles(dirName)) {
+            if (this.m_DoClearFileOnSave) {
+                foreach (string filename in Directory.GetFiles(dirName)) {
                     File.Delete(filename);
                 }
-                foreach(string subdir in Directory.GetDirectories(dirName)) {
-                    Directory.Delete(subdir,true);
+                foreach (string subdir in Directory.GetDirectories(dirName)) {
+                    Directory.Delete(subdir, true);
                 }
             }
-            foreach(XmlContentsPackage package in this.m_Packages.Values) {
+            foreach (XmlContentsPackage package in this.m_Packages.Values) {
                 List<string> packageName = new List<string>(package.Name.Split('.'));
-                this.OnSave(dirName,packageName,package);
+                this.OnSave(dirName, packageName, package);
             }
         }
-        private void OnSave(string dirName,List<string> packageName,XmlContentsPackage package) {
+        private void OnSave(string dirName, List<string> packageName, XmlContentsPackage package) {
             //"Setting.Application.Kucl:Application.FastSetup"の場合、Setting\Application\Kucl.xmlが作られる
-            if(!Directory.Exists(dirName)) {
+            if (!Directory.Exists(dirName)) {
                 Directory.CreateDirectory(dirName);
             }
-            if(packageName.Count == 1) {
-                package.Save(Path.Combine(dirName,packageName[0]) + ".xml");
+            if (packageName.Count == 1) {
+                package.Save(Path.Combine(dirName, packageName[0]) + ".xml");
             }
             else {
                 string subdir = packageName[0];
                 packageName.RemoveAt(0);
-                this.OnSave(Path.Combine(dirName,subdir),packageName,package);
+                this.OnSave(Path.Combine(dirName, subdir), packageName, package);
             }
 
         }
@@ -458,7 +495,7 @@ namespace Kucl.Xml {
         #endregion
 
         #region メンバ変数
-        private Dictionary<string,XmlContents> m_ContentsList;
+        private Dictionary<string, XmlContents> m_ContentsList;
         private string m_Name;
 
         #endregion
@@ -469,7 +506,7 @@ namespace Kucl.Xml {
         /// </summary>
         public XmlContentsPackage() {
             this.m_Name = "";
-            this.m_ContentsList = new Dictionary<string,XmlContents>();
+            this.m_ContentsList = new Dictionary<string, XmlContents>();
         }
         /// <summary>
         /// XmlContentsPackageクラスの新しいインスタンスを初期化します。
@@ -477,7 +514,7 @@ namespace Kucl.Xml {
         /// <param name="name"></param>
         public XmlContentsPackage(string name) {
             this.m_Name = name;
-            this.m_ContentsList = new Dictionary<string,XmlContents>();
+            this.m_ContentsList = new Dictionary<string, XmlContents>();
         }
         #endregion
 
@@ -495,7 +532,7 @@ namespace Kucl.Xml {
         /// <summary>
         /// 名前とXmlContentsを関連付けたハッシュテーブルを取得します。
         /// </summary>
-        public Dictionary<string,XmlContents> XmlContentsTable {
+        public Dictionary<string, XmlContents> XmlContentsTable {
             get {
                 return this.m_ContentsList;
             }
@@ -527,7 +564,7 @@ namespace Kucl.Xml {
         /// </summary>
         /// <param name="value"></param>
         public void AddXmlContents(XmlContents value) {
-            this.m_ContentsList.Add(value.Name,value);
+            this.m_ContentsList.Add(value.Name, value);
         }
 
 
@@ -538,7 +575,7 @@ namespace Kucl.Xml {
         /// <param name="name"></param>
         /// <returns></returns>
         public XmlContents GetXmlContents(string name) {
-            if(this.Contains(name)) {
+            if (this.Contains(name)) {
                 return this[name];
             }
             else {
@@ -554,8 +591,9 @@ namespace Kucl.Xml {
         /// <param name="path"></param>
         /// <returns></returns>
         public XmlContents GetXmlContents(XmlContentsPath path) {
-            return this.GetXmlContents(path.Path[0]);
-        } 
+            string contentsName = path.GetContentsRootPath();
+            return this.GetXmlContents(contentsName);
+        }
         #endregion
 
         /// <summary>
@@ -579,40 +617,44 @@ namespace Kucl.Xml {
         /// </summary>
         /// <param name="name"></param>
         /// <param name="value"></param>
-        public void AddXmlContentsItem(string name,bool value) {
+        public void AddXmlContentsItem(string name, bool value) {
             XmlContentsPath path = XmlContentsPathProvider.GetXmlContentsPathWithoutPackageName(name);
-            XmlContents contents = this.GetXmlContents(path.Path[0]);
-            contents.AddXmlContentsItem(name,value);
+            string contentsName = path.GetContentsRootPath();
+            XmlContents contents = this.GetXmlContents(contentsName);
+            contents.AddXmlContentsItem(name, value);
         }
         /// <summary>
         /// 名前を指定して、設定に文字列を追加します。
         /// </summary>
         /// <param name="name"></param>
         /// <param name="value"></param>
-        public void AddXmlContentsItem(string name,string value) {
+        public void AddXmlContentsItem(string name, string value) {
             XmlContentsPath path = XmlContentsPathProvider.GetXmlContentsPathWithoutPackageName(name);
-            XmlContents contents = this.GetXmlContents(path.Path[0]);
-            contents.AddXmlContentsItem(name,value);
+            string contentsName = path.GetContentsRootPath();
+            XmlContents contents = this.GetXmlContents(contentsName);
+            contents.AddXmlContentsItem(name, value);
         }
         /// <summary>
         /// 名前を指定して、設定に整数値を追加します。
         /// </summary>
         /// <param name="name"></param>
         /// <param name="value"></param>
-        public void AddXmlContentsItem(string name,int value) {
+        public void AddXmlContentsItem(string name, int value) {
             XmlContentsPath path = XmlContentsPathProvider.GetXmlContentsPathWithoutPackageName(name);
-            XmlContents contents = this.GetXmlContents(path.Path[0]);
-            contents.AddXmlContentsItem(name,value);
+            string contentsName = path.GetContentsRootPath();
+            XmlContents contents = this.GetXmlContents(contentsName);
+            contents.AddXmlContentsItem(name, value);
         }
         /// <summary>
         /// 名前を指定して、設定に実数値を追加します。
         /// </summary>
         /// <param name="name"></param>
         /// <param name="value"></param>
-        public void AddXmlContentsItem(string name,double value) {
+        public void AddXmlContentsItem(string name, double value) {
             XmlContentsPath path = XmlContentsPathProvider.GetXmlContentsPathWithoutPackageName(name);
-            XmlContents contents = this.GetXmlContents(path.Path[0]);
-            contents.AddXmlContentsItem(name,value);
+            string contentsName = path.GetContentsRootPath();
+            XmlContents contents = this.GetXmlContents(contentsName);
+            contents.AddXmlContentsItem(name, value);
         }
 
         /// <summary>
@@ -620,24 +662,21 @@ namespace Kucl.Xml {
         /// </summary>
         /// <param name="name"></param>
         /// <param name="item"></param>
-        public void AddXmlContentsItem(string name,XmlContentsItem item) {
+        public void AddXmlContentsItem(string name, XmlContentsItem item) {
             XmlContentsPath path = XmlContentsPathProvider.GetXmlContentsPathWithoutPackageName(name);
-            this.AddXmlContentsItem(path,item);
+            this.AddXmlContentsItem(path, item);
         }
         /// <summary>
         /// XmlContentsPathを指定して、設定にXmlContentsItemを追加します。
         /// </summary>
         /// <param name="path"></param>
         /// <param name="item"></param>
-        public void AddXmlContentsItem(XmlContentsPath path,XmlContentsItem item) {
-            XmlContents contents = this.GetXmlContents(path.Path[0]);
-            contents.AddXmlContentsItem(path,item);
+        public void AddXmlContentsItem(XmlContentsPath path, XmlContentsItem item) {
+            string contentsName = path.GetContentsRootPath();
+            XmlContents contents = this.GetXmlContents(contentsName);
+            contents.AddXmlContentsItem(path, item);
         }
 
-
-        private string GetItemName(XmlContentsPath path) {
-            return path.Path[path.Path.Length - 1];
-        }
         #endregion
 
         #region GetXmlContentsItem
@@ -656,8 +695,9 @@ namespace Kucl.Xml {
         /// <param name="path"></param>
         /// <returns></returns>
         public XmlContentsItem GetXmlContentsItem(XmlContentsPath path) {
-            if(this.Contains(path.Path[0])) {
-                return this[path.Path[0]].GetXmlContentsItem(path);
+            string contentsName = path.GetContentsRootPath();
+            if (this.Contains(contentsName)) {
+                return this[contentsName].GetXmlContentsItem(path);
             }
             throw new ArgumentException("指定された項目は存在しません。");
         }
@@ -679,7 +719,8 @@ namespace Kucl.Xml {
         /// <param name="path"></param>
         /// <returns></returns>
         public bool ContainsXmlContentsItem(XmlContentsPath path) {
-            return this.Contains(path.Path[0]) && this[path.Path[0]].Contains(path);
+            string contentsName = path.GetContentsRootPath();
+            return this.Contains(contentsName) && this[contentsName].Contains(path);
         }
         #endregion
 
@@ -689,21 +730,21 @@ namespace Kucl.Xml {
         /// </summary>
         /// <param name="filename"></param>
         public void Save(string filename) {
-            XmlTextWriter writer = new XmlTextWriter(filename,System.Text.Encoding.UTF8);
+            XmlTextWriter writer = new XmlTextWriter(filename, System.Text.Encoding.UTF8);
             writer.Formatting = Formatting.Indented;
             writer.Indentation = 4;
             try {
                 writer.WriteStartDocument();
                 writer.WriteStartElement(PackageRootElement);
-                writer.WriteAttributeString(PackageRootCountAttribute,this.m_ContentsList.Count.ToString());
-                foreach(XmlContents contents in this.m_ContentsList.Values) {
+                writer.WriteAttributeString(PackageRootCountAttribute, this.m_ContentsList.Count.ToString());
+                foreach (XmlContents contents in this.m_ContentsList.Values) {
                     contents.SaveFile(writer);
                 }
                 writer.WriteEndElement();
                 writer.WriteEndDocument();
             }
             finally {
-                if(writer != null) {
+                if (writer != null) {
                     writer.Close();
                 }
             }
@@ -717,10 +758,10 @@ namespace Kucl.Xml {
             XmlTextReader reader = new XmlTextReader(filename);
             reader.WhitespaceHandling = WhitespaceHandling.Significant;
             try {
-                while(reader.Read()) {
-                    if(reader.IsStartElement(PackageRootElement)) {
+                while (reader.Read()) {
+                    if (reader.IsStartElement(PackageRootElement)) {
                         int count = int.Parse(reader.GetAttribute(PackageRootCountAttribute));
-                        for(int i = 0;i < count;i++) {
+                        for (int i = 0; i < count; i++) {
                             //仮に名前空でインスタンスを作成(LoadFile内で自分で設定する。)
                             XmlContents contents = this.CreateXmlContents("");
                             contents.LoadFile(reader);
@@ -730,12 +771,12 @@ namespace Kucl.Xml {
                     }
                 }
             }
-            catch(XmlException ex) {
+            catch (XmlException ex) {
                 System.Diagnostics.Debug.WriteLine(ex.GetType().FullName + "\r\n" + ex.Message);
                 throw;
             }
             finally {
-                if(reader != null) {
+                if (reader != null) {
                     reader.Close();
                 }
             }
@@ -819,7 +860,7 @@ namespace Kucl.Xml {
         public XmlContents(string name) {
             this.m_Name = name;
             this.m_ItemProvider = this.CreateXmlContentsItemProvider();
-            this.m_Root = this.m_ItemProvider.CreateContainerXmlContentsItem(name);            
+            this.m_Root = this.m_ItemProvider.CreateContainerXmlContentsItem(name);
         }
         #endregion
 
@@ -846,7 +887,7 @@ namespace Kucl.Xml {
         #region CloneList
         private List<String> CloneList(List<String> list) {
             List<String> list2 = new List<String>();
-            foreach(string item in list) {
+            foreach (string item in list) {
                 list2.Add(item);
             }
             return list2;
@@ -869,29 +910,30 @@ namespace Kucl.Xml {
         /// <param name="path"></param>
         /// <returns></returns>
         public bool Contains(XmlContentsPath path) {
-            List<String> list = new List<string>(path.Path);
-            list.RemoveAt(0);
-            return this.Contains(path.Path[0],list);
+            string contentsName = path.GetContentsRootPath();
+            //rootを除いたパス文字列のリスト
+            List<String> list = new List<string>(path.Path.Skip(1));
+            return this.Contains(contentsName, list);
         }
-        private bool Contains(string root,List<String> path) {
-            if(root != "" && this.m_Name != root) {
+        private bool Contains(string root, List<String> path) {
+            if (root != "" && this.m_Name != root) {
                 return false;
             }
-            return this.Contains(this.m_Root,path);
+            return this.Contains(this.m_Root, path);
         }
 
-        private bool Contains(ContainerXmlContentsItem parent,List<String> path) {
+        private bool Contains(ContainerXmlContentsItem parent, List<String> path) {
             //Listに格納されたパスを順にチェック
-            if(parent.Items.ContainsKey(path[0])) {
+            if (parent.Items.ContainsKey(path[0])) {
                 XmlContentsItem item = parent.Items[path[0]];
-                if(path.Count == 1) {
+                if (path.Count == 1) {
                     //最後までマッチしたらtrue
                     return true;
                 }
-                else if(item.Type == XmlContentsItemType.Container) {
+                else if (item.Type == XmlContentsItemType.Container) {
                     //マッチするたびに削除して下の階層へ降りる
                     path.RemoveAt(0);
-                    return this.Contains((ContainerXmlContentsItem)item,path);
+                    return this.Contains((ContainerXmlContentsItem)item, path);
                 }
             }
             return false;
@@ -924,31 +966,32 @@ namespace Kucl.Xml {
         /// <param name="path"></param>
         /// <returns></returns>
         public XmlContentsItem GetXmlContentsItem(XmlContentsPath path) {
+            string contentsName = path.GetContentsRootPath();
             //rootを除いたパス文字列のリスト
             List<String> list = new List<string>(path.Path.Skip(1));
             //list.RemoveAt(0);
-            XmlContentsItem item = this.GetXmlContentsItem(path.Path[0],list);
+            XmlContentsItem item = this.GetXmlContentsItem(contentsName, list);
 
             #region DEBUG
 #if DEBUG
-			if(item == null){
-				Debug.WriteLine("Null XmlContents");
-				Debug.WriteLine(path);
-			}
+            if (item == null) {
+                Debug.WriteLine("Null XmlContents");
+                Debug.WriteLine(path);
+            }
 #endif
             #endregion
 
             return item;
         }
 
-        private XmlContentsItem GetXmlContentsItem(string root,List<String> path) {
-            if(root != "" && this.m_Name != root) {
+        private XmlContentsItem GetXmlContentsItem(string root, List<String> path) {
+            if (root != "" && this.m_Name != root) {
                 return null;
             }
-            return this.GetXmlContentsItem(this.m_Root,path);
+            return this.GetXmlContentsItem(this.m_Root, path);
         }
 
-        private XmlContentsItem GetXmlContentsItem(ContainerXmlContentsItem parent,List<String> path) {
+        private XmlContentsItem GetXmlContentsItem(ContainerXmlContentsItem parent, List<String> path) {
             if (parent.Items.ContainsKey(path[0])) {
                 XmlContentsItem item = parent.Items[path[0]];
                 if (path.Count == 1) {
@@ -966,10 +1009,7 @@ namespace Kucl.Xml {
         #region AddXmlContentsItem
         private string GetItemName(string completePath) {
             XmlContentsPath path = XmlContentsPathProvider.GetXmlContentsPathWithoutPackageName(completePath);
-            return this.GetItemName(path);
-        }
-        private string GetItemName(XmlContentsPath path) {
-            return path.Path[path.Path.Length - 1];
+            return path.GetItemName();
         }
 
         /// <summary>
@@ -977,65 +1017,74 @@ namespace Kucl.Xml {
         /// </summary>
         /// <param name="name"></param>
         /// <param name="value"></param>
-        public void AddXmlContentsItem(string name,bool value) {
-            this.AddXmlContentsItem(name,this.m_ItemProvider.CreateBoolXmlContentsItem(this.GetItemName(name),value));
+        public void AddXmlContentsItem(string name, bool value) {
+            string itemName = this.GetItemName(name);
+            BoolXmlContentsItem item = this.m_ItemProvider.CreateBoolXmlContentsItem(itemName, value);
+            this.AddXmlContentsItem(name, item);
         }
         /// <summary>
         /// 名前を指定して、設定に文字列を追加します。
         /// </summary>
         /// <param name="name"></param>
         /// <param name="value"></param>
-        public void AddXmlContentsItem(string name,string value) {
-            this.AddXmlContentsItem(name,this.m_ItemProvider.CreateStringXmlContentsItem(this.GetItemName(name),value));
+        public void AddXmlContentsItem(string name, string value) {
+            string itemName = this.GetItemName(name);
+            StringXmlContentsItem item = this.m_ItemProvider.CreateStringXmlContentsItem(itemName, value);
+            this.AddXmlContentsItem(name, item);
         }
         /// <summary>
         /// 名前を指定して、設定に整数値を追加します。
         /// </summary>
         /// <param name="name"></param>
         /// <param name="value"></param>
-        public void AddXmlContentsItem(string name,int value) {
-            this.AddXmlContentsItem(name,this.m_ItemProvider.CreateIntXmlContentsItem(this.GetItemName(name),value));
+        public void AddXmlContentsItem(string name, int value) {
+            string itemName = this.GetItemName(name);
+            IntXmlContentsItem item = this.m_ItemProvider.CreateIntXmlContentsItem(itemName, value);
+            this.AddXmlContentsItem(name, item);
         }
         /// <summary>
         /// 名前を指定して、設定に実数値を追加します。
         /// </summary>
         /// <param name="name"></param>
         /// <param name="value"></param>
-        public void AddXmlContentsItem(string name,double value) {
-            this.AddXmlContentsItem(name,this.m_ItemProvider.CreateDoubleXmlContentsItem(this.GetItemName(name),value));
+        public void AddXmlContentsItem(string name, double value) {
+            string itemName = this.GetItemName(name);
+            DoubleXmlContentsItem item = this.m_ItemProvider.CreateDoubleXmlContentsItem(itemName, value);
+            this.AddXmlContentsItem(name, item);
         }
         /// <summary>
         /// 名前を指定して設定にXmlContentsItemを追加します。
         /// </summary>
         /// <param name="name"></param>
         /// <param name="item"></param>
-        public void AddXmlContentsItem(string name,XmlContentsItem item) {
+        public void AddXmlContentsItem(string name, XmlContentsItem item) {
             XmlContentsPath path = XmlContentsPathProvider.GetXmlContentsPathWithoutPackageName(name);
-            this.AddXmlContentsItem(path,item);
+            this.AddXmlContentsItem(path, item);
         }
         /// <summary>
         /// XmlContentsPathを指定して、設定にXmlContentsItemを追加します。
         /// </summary>
         /// <param name="path"></param>
         /// <param name="item"></param>
-        public void AddXmlContentsItem(XmlContentsPath path,XmlContentsItem item) {
-            List<string> list = new List<string>(path.Path);
-            list.RemoveAt(0);
-            this.AddXmlContentsItem(path.Path[0],list,item);
+        public void AddXmlContentsItem(XmlContentsPath path, XmlContentsItem item) {
+            string contentsName = path.GetContentsRootPath();
+            //ContentsNameを除いたPathリストを作成
+            List<string> list = new List<string>(path.Path.Skip(1));
+            this.AddXmlContentsItem(contentsName, list, item);
         }
 
-        private void AddXmlContentsItem(string root,List<String> path,XmlContentsItem item) {
-            if(root != "" && this.m_Name != root) {
+        private void AddXmlContentsItem(string root, List<String> path, XmlContentsItem item) {
+            if (root != "" && this.m_Name != root) {
                 throw new ArgumentException("間違ったパスルートが指定されました。");
             }
-            this.AddXmlContentsItem(this.m_Root,path,item);
+            this.AddXmlContentsItem(this.m_Root, path, item);
         }
 
-        private void AddXmlContentsItem(ContainerXmlContentsItem parent,List<String> path,XmlContentsItem item) {
-            if(path.Count == 1) {
+        private void AddXmlContentsItem(ContainerXmlContentsItem parent, List<String> path, XmlContentsItem item) {
+            if (path.Count == 1) {
                 //parentは追加すべきアイテムの直の親
-                if(!parent.Items.ContainsKey(path[0])) {
-                    parent.Items.Add(path[0],item);
+                if (!parent.Items.ContainsKey(path[0])) {
+                    parent.Items.Add(path[0], item);
                 }
                 else {
                     parent.Items[path[0]] = item;
@@ -1044,15 +1093,15 @@ namespace Kucl.Xml {
             }
             else {
                 ContainerXmlContentsItem nextParent;
-                if(!parent.Items.ContainsKey(path[0])) {
+                if (!parent.Items.ContainsKey(path[0])) {
                     nextParent = this.m_ItemProvider.CreateContainerXmlContentsItem(path[0]);
-                    parent.Items.Add(path[0],nextParent);
+                    parent.Items.Add(path[0], nextParent);
                 }
                 else {
                     nextParent = (ContainerXmlContentsItem)parent.Items[path[0]];
                 }
                 path.RemoveAt(0);
-                this.AddXmlContentsItem(nextParent,path,item);
+                this.AddXmlContentsItem(nextParent, path, item);
             }
         }
         #endregion
@@ -1064,24 +1113,27 @@ namespace Kucl.Xml {
         /// <param name="completePath"></param>
         public void RemoveXmlContentsItem(string completePath) {
             XmlContentsPath path = XmlContentsPathProvider.GetXmlContentsPath(completePath);
-            List<String> list = new List<string>(path.Path);
-            list.RemoveAt(0);
-            this.RemoveXmlContentsItem(path.Path[0],list);
+            string contentsName = path.GetContentsRootPath();
+            //rootを除いたパス文字列のリスト
+            List<String> list = new List<string>(path.Path.Skip(1));
+            this.RemoveXmlContentsItem(contentsName, list);
         }
 
-        private void RemoveXmlContentsItem(string root,List<String> path) {
-            XmlContentsItem item = this.GetXmlContentsItem(root,this.CloneList(path));
-            if(item != null) {
+        private void RemoveXmlContentsItem(string root, List<String> path) {
+            //GetXmlContentsItemメソッドはpathリストを削除しながら動作するため、pathの複製を渡す。
+            XmlContentsItem item = this.GetXmlContentsItem(root, path.ToList());
+            if (item != null) {
                 string target = path[path.Count - 1];
                 path.RemoveAt(path.Count - 1);
-                item = this.GetXmlContentsItem(root,this.CloneList(path));
-                if(item.Type != XmlContentsItemType.Container) {
+                //GetXmlContentsItemメソッドはpathリストを削除しながら動作するため、pathの複製を渡す。
+                item = this.GetXmlContentsItem(root, path.ToList());
+                if (item.Type != XmlContentsItemType.Container) {
                     throw new ArgumentException("不正なパスです。");
                 }
                 ContainerXmlContentsItem parent = (ContainerXmlContentsItem)item;
                 parent.Items.Remove(target);
-                if(parent.Items.Count == 0) {
-                    this.RemoveXmlContentsItem(root,path);
+                if (parent.Items.Count == 0) {
+                    this.RemoveXmlContentsItem(root, path);
                 }
             }
         }
@@ -1099,25 +1151,25 @@ namespace Kucl.Xml {
         #region ファイル入出力
         internal void SaveFile(XmlTextWriter writer) {
             writer.WriteStartElement(ContentsRootElement);
-            writer.WriteAttributeString(ContentsRootNameAttribute,this.Name);
-            writer.WriteAttributeString(ContentsRootCountAttribute,this.m_Root.Items.Count.ToString());
-            foreach(XmlContentsItem item in this.m_Root.Items.Values) {
-                this.m_ItemProvider.Save(writer,item);
+            writer.WriteAttributeString(ContentsRootNameAttribute, this.Name);
+            writer.WriteAttributeString(ContentsRootCountAttribute, this.m_Root.Items.Count.ToString());
+            foreach (XmlContentsItem item in this.m_Root.Items.Values) {
+                this.m_ItemProvider.Save(writer, item);
             }
             writer.WriteEndElement();
         }
         internal void LoadFile(XmlTextReader reader) {
-            while(reader.Read()) {
-                if(reader.IsStartElement(ContentsRootElement)) {
+            while (reader.Read()) {
+                if (reader.IsStartElement(ContentsRootElement)) {
                     string name = reader.GetAttribute(ContentsRootNameAttribute);
                     this.m_Name = name;
                     this.m_Root = this.m_ItemProvider.CreateContainerXmlContentsItem(name);
                     int count = int.Parse(reader.GetAttribute(ContentsRootCountAttribute));
                     reader.Read();
-                    for(int i = 0;i < count;i++) {
+                    for (int i = 0; i < count; i++) {
                         XmlContentsItem item = this.m_ItemProvider.Load(reader);
-                        
-                        this.AddXmlContentsItem(name + '.' + item.Name,item);
+
+                        this.AddXmlContentsItem(name + '.' + item.Name, item);
                     }
                     break;
                 }
@@ -1201,10 +1253,10 @@ namespace Kucl.Xml {
         /// </summary>
         /// <param name="writer"></param>
         /// <param name="item"></param>
-        public void Save(XmlTextWriter writer,XmlContentsItem item) {
+        public void Save(XmlTextWriter writer, XmlContentsItem item) {
             writer.WriteStartElement(ItemRootElement);
-            writer.WriteAttributeString(ItemRootNameAttribute,item.Name);
-            writer.WriteAttributeString(ItemRootTypeAttribute,item.Type.ToString());
+            writer.WriteAttributeString(ItemRootNameAttribute, item.Name);
+            writer.WriteAttributeString(ItemRootTypeAttribute, item.Type.ToString());
             item.Save(writer);
             writer.WriteEndElement();
         }
@@ -1217,27 +1269,27 @@ namespace Kucl.Xml {
         /// <returns></returns>
         public XmlContentsItem Load(XmlTextReader reader) {
             try {
-                if(reader.IsStartElement(ItemRootElement)) {
+                if (reader.IsStartElement(ItemRootElement)) {
                     string name = reader.GetAttribute(ItemRootNameAttribute);
                     string typeName = reader.GetAttribute(ItemRootTypeAttribute);
-                    XmlContentsItemType type = (XmlContentsItemType)Enum.Parse(typeof(XmlContentsItemType),typeName);
+                    XmlContentsItemType type = (XmlContentsItemType)Enum.Parse(typeof(XmlContentsItemType), typeName);
                     bool isEmpty = reader.IsEmptyElement;
                     reader.Read();
-                    XmlContentsItem item = this.GenerateItem(type,name);
-                    if(item != null) {
+                    XmlContentsItem item = this.GenerateItem(type, name);
+                    if (item != null) {
                         item.Load(reader);
                     }
-                    if(!isEmpty) {
+                    if (!isEmpty) {
                         reader.Read();
                     }
                     return item;
                 }
                 return null;
             }
-            catch(XmlException) {
+            catch (XmlException) {
                 throw;
             }
-            catch(Exception) {// ex){
+            catch (Exception) {// ex){
                 //AppMain.g_AppMain.DebugWrite(ex);
                 throw;
             }
@@ -1245,7 +1297,7 @@ namespace Kucl.Xml {
 
         #endregion
 
-        
+
         #region virtualメソッド
         /// <summary>
         /// ContainerXmlContentsItemを生成するメソッドです。
@@ -1255,8 +1307,7 @@ namespace Kucl.Xml {
         /// <param name="name"></param>
         /// <returns></returns>
         public virtual ContainerXmlContentsItem CreateContainerXmlContentsItem(string name) {
-            return new ContainerXmlContentsItem(name)
-            {
+            return new ContainerXmlContentsItem(name) {
                 ItemProvider = this
             };
         }
@@ -1267,8 +1318,8 @@ namespace Kucl.Xml {
         /// <param name="name"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public virtual BoolXmlContentsItem CreateBoolXmlContentsItem(string name,bool value) {
-            return new BoolXmlContentsItem(name,value);
+        public virtual BoolXmlContentsItem CreateBoolXmlContentsItem(string name, bool value) {
+            return new BoolXmlContentsItem(name, value);
         }
         /// <summary>
         /// StringXmlContentsItemを生成するメソッドです。
@@ -1277,8 +1328,8 @@ namespace Kucl.Xml {
         /// <param name="name"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public virtual StringXmlContentsItem CreateStringXmlContentsItem(string name,string value) {
-            return new StringXmlContentsItem(name,value);
+        public virtual StringXmlContentsItem CreateStringXmlContentsItem(string name, string value) {
+            return new StringXmlContentsItem(name, value);
         }
         /// <summary>
         /// IntXmlContentsItemを生成するメソッドです。
@@ -1287,8 +1338,8 @@ namespace Kucl.Xml {
         /// <param name="name"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public virtual IntXmlContentsItem CreateIntXmlContentsItem(string name,int value) {
-            return new IntXmlContentsItem(name,value);
+        public virtual IntXmlContentsItem CreateIntXmlContentsItem(string name, int value) {
+            return new IntXmlContentsItem(name, value);
         }
         /// <summary>
         /// DoubleXmlContentsItemを生成するメソッドです。
@@ -1297,10 +1348,10 @@ namespace Kucl.Xml {
         /// <param name="name"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public virtual DoubleXmlContentsItem CreateDoubleXmlContentsItem(string name,double value) {
-            return new DoubleXmlContentsItem(name,value);
+        public virtual DoubleXmlContentsItem CreateDoubleXmlContentsItem(string name, double value) {
+            return new DoubleXmlContentsItem(name, value);
         }
-        
+
         #endregion
 
         #region 型解決
@@ -1310,31 +1361,31 @@ namespace Kucl.Xml {
         /// <param name="type"></param>
         /// <param name="name"></param>
         /// <returns></returns>
-        public XmlContentsItem GenerateItem(XmlContentsItemType type,string name) {
+        public XmlContentsItem GenerateItem(XmlContentsItemType type, string name) {
             XmlContentsItem item;
-            switch(type) {
+            switch (type) {
                 case XmlContentsItemType.Container:
                     item = this.CreateContainerXmlContentsItem(name);
                     break;
                 case XmlContentsItemType.Bool:
-                    item = this.CreateBoolXmlContentsItem(name,false);
+                    item = this.CreateBoolXmlContentsItem(name, false);
                     break;
                 case XmlContentsItemType.String:
-                    item = this.CreateStringXmlContentsItem(name,"");
+                    item = this.CreateStringXmlContentsItem(name, "");
                     break;
                 case XmlContentsItemType.Int:
-                    item = this.CreateIntXmlContentsItem(name,0);
+                    item = this.CreateIntXmlContentsItem(name, 0);
                     break;
                 case XmlContentsItemType.Double:
-                    item = this.CreateDoubleXmlContentsItem(name,0.0);
+                    item = this.CreateDoubleXmlContentsItem(name, 0.0);
                     break;
                 default:
                     throw new ArgumentException("不明なXmlContentsItemTypeが指定されました。");
             }
             return item;
-        } 
+        }
         #endregion
-        
+
 
     }
     #endregion
@@ -1347,7 +1398,7 @@ namespace Kucl.Xml {
 
         #region メンバ変数
         private XmlContentsItemType m_Type;
-        private string m_Name; 
+        private string m_Name;
         #endregion
 
         #region コンストラクタ
@@ -1356,10 +1407,10 @@ namespace Kucl.Xml {
         /// </summary>
         /// <param name="type"></param>
         /// <param name="name"></param>
-        protected XmlContentsItem(XmlContentsItemType type,string name) {
+        protected XmlContentsItem(XmlContentsItemType type, string name) {
             this.m_Type = type;
             this.m_Name = name;
-        } 
+        }
         #endregion
 
         #region プロパティ
@@ -1385,7 +1436,7 @@ namespace Kucl.Xml {
         public abstract object Value {
             get;
             set;
-        } 
+        }
         #endregion
 
         #region ファイル入出力
@@ -1422,7 +1473,7 @@ namespace Kucl.Xml {
         /// <param name="writer"></param>
         protected void WriteDefaultValue(XmlTextWriter writer) {
             writer.WriteString(this.Value.ToString());
-        } 
+        }
         #endregion
     }
     #endregion
@@ -1461,7 +1512,7 @@ namespace Kucl.Xml {
     /// <summary>
     /// 他のXmlContentsItemを包含するXmlContentsItemです。
     /// </summary>
-    public class ContainerXmlContentsItem:XmlContentsItem {
+    public class ContainerXmlContentsItem : XmlContentsItem {
 
         #region 定数
         /// <summary>
@@ -1481,8 +1532,8 @@ namespace Kucl.Xml {
         /// </summary>
         /// <param name="name"></param>
         public ContainerXmlContentsItem(string name)
-            : base(XmlContentsItemType.Container,name) {
-            this.m_Children = new Dictionary<string,XmlContentsItem>();
+            : base(XmlContentsItemType.Container, name) {
+            this.m_Children = new Dictionary<string, XmlContentsItem>();
         }
         #endregion
 
@@ -1500,11 +1551,11 @@ namespace Kucl.Xml {
             }
         }
 
-        private Dictionary<string,XmlContentsItem> m_Children;
+        private Dictionary<string, XmlContentsItem> m_Children;
         /// <summary>
         /// 保持するXmlContentsItemのハッシュテーブルを取得します。
         /// </summary>
-        public Dictionary<string,XmlContentsItem> Items {
+        public Dictionary<string, XmlContentsItem> Items {
             get {
                 return this.m_Children;
             }
@@ -1528,9 +1579,9 @@ namespace Kucl.Xml {
         /// </summary>
         /// <param name="writer"></param>
         protected override void OnSave(XmlTextWriter writer) {
-            writer.WriteElementString(ItemCountElement,this.m_Children.Count.ToString());
-            foreach(XmlContentsItem item in this.m_Children.Values) {
-                this.m_ItemProvider.Save(writer,item);
+            writer.WriteElementString(ItemCountElement, this.m_Children.Count.ToString());
+            foreach (XmlContentsItem item in this.m_Children.Values) {
+                this.m_ItemProvider.Save(writer, item);
             }
         }
         /// <summary>
@@ -1542,12 +1593,12 @@ namespace Kucl.Xml {
                 reader.ReadStartElement(ItemCountElement);
                 int count = int.Parse(reader.ReadString());
                 reader.Read();
-                for(int i = 0;i < count;i++) {
+                for (int i = 0; i < count; i++) {
                     XmlContentsItem item = this.m_ItemProvider.Load(reader);
-                    this.m_Children.Add(item.Name,item);
+                    this.m_Children.Add(item.Name, item);
                 }
             }
-            catch(XmlException) {// ex){
+            catch (XmlException) {// ex){
                 //AppMain.g_AppMain.DebugWrite(ex);
                 throw;
             }
@@ -1561,7 +1612,7 @@ namespace Kucl.Xml {
     /// <summary>
     /// Bool値を持つXmlContentsItemです。
     /// </summary>
-    public class BoolXmlContentsItem:XmlContentsItem {
+    public class BoolXmlContentsItem : XmlContentsItem {
 
         #region コンストラクタ
         /// <summary>
@@ -1569,15 +1620,15 @@ namespace Kucl.Xml {
         /// </summary>
         /// <param name="name"></param>
         public BoolXmlContentsItem(string name)
-            : this(name,true) {
+            : this(name, true) {
         }
         /// <summary>
         /// BoolXmlContentsItemオブジェクトの新しいインスタンスを初期化します。
         /// </summary>
         /// <param name="name"></param>
         /// <param name="value"></param>
-        public BoolXmlContentsItem(string name,bool value)
-            : base(XmlContentsItemType.Bool,name) {
+        public BoolXmlContentsItem(string name, bool value)
+            : base(XmlContentsItemType.Bool, name) {
             this.m_Value = value;
         }
         #endregion
@@ -1610,7 +1661,7 @@ namespace Kucl.Xml {
         /// </summary>
         /// <param name="reader"></param>
         protected override void OnLoad(XmlTextReader reader) {
-            if(reader.HasValue) {
+            if (reader.HasValue) {
                 this.m_Value = bool.Parse(reader.ReadString());
             }
         }
@@ -1623,7 +1674,7 @@ namespace Kucl.Xml {
     /// <summary>
     /// 文字列を持つXmlContentsItemです。
     /// </summary>
-    public class StringXmlContentsItem:XmlContentsItem {
+    public class StringXmlContentsItem : XmlContentsItem {
 
         #region コンストラクタ
         /// <summary>
@@ -1631,15 +1682,15 @@ namespace Kucl.Xml {
         /// </summary>
         /// <param name="name"></param>
         public StringXmlContentsItem(string name)
-            : this(name,"") {
+            : this(name, "") {
         }
         /// <summary>
         /// StringXmlContentsItemオブジェクトの新しいインスタンスを初期化します。
         /// </summary>
         /// <param name="name"></param>
         /// <param name="value"></param>
-        public StringXmlContentsItem(string name,string value)
-            : base(XmlContentsItemType.String,name) {
+        public StringXmlContentsItem(string name, string value)
+            : base(XmlContentsItemType.String, name) {
             this.m_Value = value;
         }
         #endregion
@@ -1666,7 +1717,7 @@ namespace Kucl.Xml {
         /// <param name="writer"></param>
         protected override void OnSave(XmlTextWriter writer) {
             //nullはシリアル化時にから文字列に変換する
-            if(this.m_Value == null) {
+            if (this.m_Value == null) {
                 this.m_Value = "";
             }
             this.WriteDefaultValue(writer);
@@ -1676,7 +1727,7 @@ namespace Kucl.Xml {
         /// </summary>
         /// <param name="reader"></param>
         protected override void OnLoad(XmlTextReader reader) {
-            if(reader.HasValue) {
+            if (reader.HasValue) {
                 this.m_Value = reader.ReadString();
             }
         }
@@ -1689,7 +1740,7 @@ namespace Kucl.Xml {
     /// <summary>
     /// 整数値を持つXmlContentsItemです。
     /// </summary>
-    public class IntXmlContentsItem:XmlContentsItem {
+    public class IntXmlContentsItem : XmlContentsItem {
 
         #region コンストラクタ
         /// <summary>
@@ -1697,15 +1748,15 @@ namespace Kucl.Xml {
         /// </summary>
         /// <param name="name"></param>
         public IntXmlContentsItem(string name)
-            : this(name,0) {
+            : this(name, 0) {
         }
         /// <summary>
         /// IntXmlContentsItemオブジェクトの新しいインスタンスを初期化します。
         /// </summary>
         /// <param name="name"></param>
         /// <param name="value"></param>
-        public IntXmlContentsItem(string name,int value)
-            : base(XmlContentsItemType.Int,name) {
+        public IntXmlContentsItem(string name, int value)
+            : base(XmlContentsItemType.Int, name) {
             this.m_Value = value;
         }
         #endregion
@@ -1738,7 +1789,7 @@ namespace Kucl.Xml {
         /// </summary>
         /// <param name="reader"></param>
         protected override void OnLoad(XmlTextReader reader) {
-            if(reader.HasValue) {
+            if (reader.HasValue) {
                 this.m_Value = int.Parse(reader.ReadString());
             }
         }
@@ -1751,7 +1802,7 @@ namespace Kucl.Xml {
     /// <summary>
     /// 実数値を持つXmlContentsItemです。
     /// </summary>
-    public class DoubleXmlContentsItem:XmlContentsItem {
+    public class DoubleXmlContentsItem : XmlContentsItem {
 
         #region コンストラクタ
         /// <summary>
@@ -1759,15 +1810,15 @@ namespace Kucl.Xml {
         /// </summary>
         /// <param name="name"></param>
         public DoubleXmlContentsItem(string name)
-            : this(name,0.0) {
+            : this(name, 0.0) {
         }
         /// <summary>
         /// DoubleXmlContentsItemオブジェクトの新しいインスタンスを初期化します。
         /// </summary>
         /// <param name="name"></param>
         /// <param name="value"></param>
-        public DoubleXmlContentsItem(string name,double value)
-            : base(XmlContentsItemType.Double,name) {
+        public DoubleXmlContentsItem(string name, double value)
+            : base(XmlContentsItemType.Double, name) {
             this.m_Value = value;
         }
         #endregion
@@ -1800,7 +1851,7 @@ namespace Kucl.Xml {
         /// </summary>
         /// <param name="reader"></param>
         protected override void OnLoad(XmlTextReader reader) {
-            if(reader.HasValue) {
+            if (reader.HasValue) {
                 this.m_Value = double.Parse(reader.ReadString());
             }
         }
