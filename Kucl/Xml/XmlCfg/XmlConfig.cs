@@ -19,7 +19,7 @@ namespace Kucl.Xml.XmlCfg {
     /// XmlContentsModelをベースに、Configクラス群として再定義されたクラスを表します。
     /// 基本動作はXmlContentsModelに従います。
     /// </summary>
-    public class XmlConfigModel:XmlContentsModel {
+    public class XmlConfigModel : XmlContentsModel {
 
         /// <summary>
         /// XmlConfigModelクラスの新しいインスタンスを初期化します。
@@ -44,7 +44,7 @@ namespace Kucl.Xml.XmlCfg {
     /// XmlContentsPackageをベースに、Configクラス群として再定義されたクラスを表します。
     /// 基本動作はXmlContentsPackageに従います。
     /// </summary>
-    public class XmlConfigPackage:XmlContentsPackage {
+    public class XmlConfigPackage : XmlContentsPackage {
         /// <summary>
         /// 名前を指定して、XmlConfigPackageクラスの新しいインスタンスを初期化します。
         /// </summary>
@@ -74,7 +74,7 @@ namespace Kucl.Xml.XmlCfg {
         protected override XmlContents CreateXmlContents(string name) {
             return new XmlConfigSection(name);
         }
-    } 
+    }
     #endregion
 
     #region XmlConfigSection
@@ -82,7 +82,7 @@ namespace Kucl.Xml.XmlCfg {
     /// XmlContentsをベースに、Configクラス群として再定義されたクラスを表します。
     /// 基本動作はXmlContentsに従います。
     /// </summary>
-    public class XmlConfigSection:XmlContents {
+    public class XmlConfigSection : XmlContents {
         /// <summary>
         /// 名前を指定して、XmlConfigSectionクラスの新しいインスタンスを初期化します。
         /// </summary>
@@ -111,7 +111,7 @@ namespace Kucl.Xml.XmlCfg {
         protected override XmlContentsItemProvider CreateXmlContentsItemProvider() {
             return new XmlConfigItemProvider();
         }
-    } 
+    }
     #endregion
 
     #region XmlConfigItemProvider
@@ -119,7 +119,7 @@ namespace Kucl.Xml.XmlCfg {
     /// XmlContentsItemProviderをベースに、Configクラス群として再定義されたクラスを表します。
     /// 基本動作はXmlContentsItemProviderに従います。
     /// </summary>
-    public class XmlConfigItemProvider:XmlContentsItemProvider {
+    public class XmlConfigItemProvider : XmlContentsItemProvider {
         /// <summary>
         /// XmlConfigItemProviderクラスの新しいインスタンスを初期化します。
         /// </summary>
@@ -135,10 +135,10 @@ namespace Kucl.Xml.XmlCfg {
                 return "ConfigItem";
             }
         }
-    } 
+    }
     #endregion
-    
-    
+
+
 
 
     #region IUseConfig
@@ -169,7 +169,7 @@ namespace Kucl.Xml.XmlCfg {
         /// <param name="name"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        bool IsDefaultValue(string name,XmlContentsItem value);
+        bool IsDefaultValue(string name, XmlContentsItem value);
     }
     #endregion
 
@@ -177,7 +177,7 @@ namespace Kucl.Xml.XmlCfg {
     /// <summary>
     /// IUseConfigインターフェースを実装したオブジェクトのコレクションを表します。
     /// </summary>
-    public class UseConfigObjectCollection:System.Collections.CollectionBase {
+    public class UseConfigObjectCollection : System.Collections.CollectionBase {
         /// <summary>
         /// IUseConfigオブジェクトを取得、設定するインデクサです。
         /// </summary>
@@ -211,8 +211,8 @@ namespace Kucl.Xml.XmlCfg {
         /// </summary>
         /// <param name="index"></param>
         /// <param name="value"></param>
-        public void Insert(int index,IUseConfig value) {
-            this.List.Insert(index,value);
+        public void Insert(int index, IUseConfig value) {
+            this.List.Insert(index, value);
         }
         /// <summary>
         /// IUseConfigオブジェクトがコレクションに含まれているかどうかを返します。
@@ -275,10 +275,12 @@ namespace Kucl.Xml.XmlCfg {
         /// <param name="name"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public bool IsDefaultValue(string name,XmlContentsItem value) {
-            XmlContentsItem item = this.m_DefaultConfig.GetXmlContentsItem(name);
-            if(item != null && item.Type != XmlContentsItemType.Container) {
-                return item.Value.Equals(value.Value);
+        public bool IsDefaultValue(string name, XmlContentsItem value) {
+            if (this.m_DefaultConfig.ContainsXmlContentsItem(name)) {
+                XmlContentsItem item = this.m_DefaultConfig.GetXmlContentsItem(name);
+                if (item != null && item.Type != XmlContentsItemType.Container) {
+                    return item.Value.Equals(value.Value);
+                }
             }
             return false;
         }
@@ -291,23 +293,18 @@ namespace Kucl.Xml.XmlCfg {
         /// <param name="name"></param>
         /// <returns></returns>
         public XmlContentsItem GetXmlContentsItem(string name) {
-            XmlContentsItem item;
-            if(!this.m_Config.ContainsXmlContentsItem(name)) {
+            if (this.m_Config.ContainsXmlContentsItem(name)) {
+                return this.m_Config.GetXmlContentsItem(name);
+            }
 #if DEBUG
-				System.Diagnostics.Debug.WriteLine("存在しないConfig\r\n" + name);
+            System.Diagnostics.Debug.WriteLine("存在しないConfig\r\n" + name);
 #endif
-                //存在しない設定の場合、デフォルトの設定から取得
-                item = this.m_DefaultConfig.GetXmlContentsItem(name);
-
-                //デフォルトにも存在しない場合は例外をスロー
-                if(item == null) {
-                    throw new ArgumentException(string.Format("{0}は存在しません",name));
-                }
+            //存在しない設定の場合、デフォルトの設定から取得
+            if (this.m_DefaultConfig.ContainsXmlContentsItem(name)) {
+                return this.m_DefaultConfig.GetXmlContentsItem(name);
             }
-            else {
-                item = this.m_Config.GetXmlContentsItem(name);
-            }
-            return item;
+            //デフォルトにも存在しない場合は例外をスロー
+            throw new ArgumentException(string.Format("{0}は存在しません", name));
         }
         #endregion
 
@@ -330,7 +327,7 @@ namespace Kucl.Xml.XmlCfg {
         /// <param name="name"></param>
         /// <param name="defaultValue"></param>
         /// <returns></returns>
-        public int GetIntValue(string name,int defaultValue) {
+        public int GetIntValue(string name, int defaultValue) {
             try {
                 return this.GetIntValue(name);
             }
