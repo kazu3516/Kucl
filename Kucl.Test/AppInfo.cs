@@ -45,6 +45,22 @@ namespace Kucl.Test {
         #endregion
 
 
+        #region EnableDetailSettings
+        private bool m_EnableDetailSettings;
+        /// <summary>
+        /// EnableDetailSettingsを取得、設定します。
+        /// </summary>
+        public bool EnableDetailSettings {
+            get {
+                return this.m_EnableDetailSettings;
+            }
+            set {
+                this.m_EnableDetailSettings = value;
+            }
+        }
+        #endregion
+
+
 
         #endregion
 
@@ -117,6 +133,7 @@ namespace Kucl.Test {
             int y = this.m_ConfigHelper.GetIntValue("Kucl.setting:Common.Location.Y");
             this.m_Location = new System.Drawing.Point(x, y);
 
+            this.m_EnableDetailSettings = this.m_ConfigHelper.GetBoolValue("Kucl.setting:Common.Settings.Detail.Enabled");
         }
 
 
@@ -125,7 +142,7 @@ namespace Kucl.Test {
             config.AddXmlContentsItem("Kucl.setting:Common.Name", this.m_Name);
             config.AddXmlContentsItem("Kucl.setting:Common.Location.X", this.m_Location.X);
             config.AddXmlContentsItem("Kucl.setting:Common.Location.Y", this.m_Location.Y);
-
+            config.AddXmlContentsItem("Kucl.setting:Common.Settings.Detail.Enabled", this.m_EnableDetailSettings);
         }
 
         //既定のConfig
@@ -133,7 +150,7 @@ namespace Kucl.Test {
             config.AddXmlContentsItem("Kucl.setting:Common.Name", "SAMPLE_NAME");
             config.AddXmlContentsItem("Kucl.setting:Common.Location.X", 10);
             config.AddXmlContentsItem("Kucl.setting:Common.Location.Y", 20);
-
+            config.AddXmlContentsItem("Kucl.setting:Common.Settings.Detail.Enabled", false);
         }
 
 
