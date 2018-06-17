@@ -132,7 +132,7 @@ namespace Kucl.Xml.XmlCfg {
         /// XmlConfigItemProviderクラスのインスタンスを生成します。
         /// </summary>
         /// <returns></returns>
-        public override XmlContentsItemProvider CreateXmlContentsItemProvider() {
+        protected override XmlContentsItemProvider CreateXmlContentsItemProvider() {
             return new XmlConfigItemProvider();
         }
         #endregion

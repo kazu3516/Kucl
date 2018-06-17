@@ -406,8 +406,21 @@ namespace Kucl.Xml {
             foreach (string filename in Directory.GetFiles(dirName, "*.xml")) {
                 string pName = packageName != "" ? packageName + "." : "";
                 pName += Path.GetFileNameWithoutExtension(filename);
-                XmlContentsPackage package = this.CreateXmlContentsPackage(pName);
-                package.Load(Path.Combine(dirName, filename));
+                
+                //NOTE:XmlContentsReaderの導入により廃止
+                //XmlContentsPackage package = this.CreateXmlContentsPackage(pName);
+                //package.Load(Path.Combine(dirName, filename));
+
+                //TODO:XmlContentsReaderFactoryを使用したインスタンス生成に変更する。バージョン判断のためのPreLoadが必要。
+                XmlContentsReader reader = new XmlContentsReader_00();
+                XmlContentsPackageReadInfo info = new XmlContentsPackageReadInfo() {
+                    FileName = filename,
+                    PackageName = pName,
+                    Owner = this
+                };
+                XmlContentsPackage package = reader.LoadPackage(info);
+
+                //読み込んだXmlContentsPackageを追加
                 this.AddPackage(package);
             }
             foreach (string dir in Directory.GetDirectories(dirName)) {
@@ -442,7 +455,17 @@ namespace Kucl.Xml {
                 Directory.CreateDirectory(dirName);
             }
             if (packageName.Count == 1) {
-                package.Save(Path.Combine(dirName, packageName[0]) + ".xml");
+                string filename = Path.Combine(dirName, packageName[0]) + ".xml";
+
+                //NOTE:XmlContentsWriterの導入により廃止
+                //package.Save(filename);
+
+                XmlContentsWriter writer = new XmlContentsWriter_00();
+                XmlContentsPackageWriteInfo info = new XmlContentsPackageWriteInfo() {
+                    FileName = filename,
+                    Package = package
+                };
+                writer.SavePackage(info);
             }
             else {
                 string subdir = packageName[0];
@@ -1174,7 +1197,7 @@ namespace Kucl.Xml {
         /// このXmlContentsで使用するXmlContentsItemProviderクラスのインスタンスを生成します。
         /// </summary>
         /// <returns></returns>
-        public virtual XmlContentsItemProvider CreateXmlContentsItemProvider() {
+        protected virtual XmlContentsItemProvider CreateXmlContentsItemProvider() {
             return new XmlContentsItemProvider();
         }
 

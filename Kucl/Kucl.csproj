@@ -82,6 +82,8 @@
       <DependentUpon>XmlContentsModelViewer.cs</DependentUpon>
     </Compile>
     <Compile Include="Xml\XmlContents.cs" />
+    <Compile Include="Xml\XmlContentsReader.cs" />
+    <Compile Include="Xml\XmlContentsWriter.cs" />
     <Compile Include="YUVColor.cs" />
   </ItemGroup>
   <ItemGroup>
