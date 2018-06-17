@@ -460,7 +460,7 @@ namespace Kucl.Xml {
         /// </summary>
         /// <param name="packageName"></param>
         /// <returns></returns>
-        protected virtual XmlContentsPackage CreateXmlContentsPackage(string packageName) {
+        public virtual XmlContentsPackage CreateXmlContentsPackage(string packageName) {
             return new XmlContentsPackage(packageName);
         }
         #endregion
@@ -478,7 +478,7 @@ namespace Kucl.Xml {
         /// <summary>
         /// シリアル化する際のルートエレメント名を取得します。
         /// </summary>
-        protected virtual string PackageRootElement {
+        public virtual string PackageRootElement {
             get {
                 return "Package";
             }
@@ -487,7 +487,7 @@ namespace Kucl.Xml {
         /// シリアル化する際のルートエレメントが持つ属性名を取得します。
         /// この属性は子エレメントの個数を表します。
         /// </summary>
-        protected virtual string PackageRootCountAttribute {
+        public virtual string PackageRootCountAttribute {
             get {
                 return "Count";
             }
@@ -790,7 +790,7 @@ namespace Kucl.Xml {
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        protected virtual XmlContents CreateXmlContents(string name) {
+        public virtual XmlContents CreateXmlContents(string name) {
             return new XmlContents(name);
         }
         #endregion
@@ -807,7 +807,7 @@ namespace Kucl.Xml {
         /// <summary>
         /// シリアル化する際のルートエレメント名を取得します。
         /// </summary>
-        protected virtual string ContentsRootElement {
+        public virtual string ContentsRootElement {
             get {
                 return "Contents";
             }
@@ -816,7 +816,7 @@ namespace Kucl.Xml {
         /// シリアル化する際のルートエレメントが持つ属性名を取得します。
         /// この属性はこのエレメントの名前を表します。
         /// </summary>
-        protected virtual string ContentsRootNameAttribute {
+        public virtual string ContentsRootNameAttribute {
             get {
                 return "Name";
             }
@@ -825,15 +825,27 @@ namespace Kucl.Xml {
         /// シリアル化する際のルートエレメントが持つ属性名を取得します。
         /// この属性は子エレメントの個数を表します。
         /// </summary>
-        protected virtual string ContentsRootCountAttribute {
+        public virtual string ContentsRootCountAttribute {
             get {
                 return "Count";
             }
         }
         #endregion
 
-        #region メンバ変数
+        #region メンバ変数、プロパティ
         private string m_Name;
+        /// <summary>
+        /// XmlContentsオブジェクトの名前を取得します。
+        /// </summary>
+        public string Name {
+            get {
+                return this.m_Name;
+            }
+            set {
+                this.m_Name = value;
+                this.m_Root.Name = value;
+            }
+        }
         private ContainerXmlContentsItem m_Root;
         internal ContainerXmlContentsItem RootItem {
             get {
@@ -842,6 +854,14 @@ namespace Kucl.Xml {
         }
 
         private XmlContentsItemProvider m_ItemProvider;
+        /// <summary>
+        /// このインスタンスで使用するXmlContentsItemProviderを取得します。
+        /// </summary>
+        public virtual XmlContentsItemProvider ItemProvider {
+            get {
+                return this.m_ItemProvider;
+            }
+        }
         #endregion
 
         #region コンストラクタ
@@ -864,35 +884,6 @@ namespace Kucl.Xml {
         }
         #endregion
 
-        #region プロパティ
-        /// <summary>
-        /// XmlContentsオブジェクトの名前を取得します。
-        /// </summary>
-        public string Name {
-            get {
-                return this.m_Name;
-            }
-        }
-        /// <summary>
-        /// このインスタンスで使用するXmlContentsItemProviderを取得します。
-        /// このオブジェクトは
-        /// </summary>
-        public virtual XmlContentsItemProvider ItemProvider {
-            get {
-                return this.m_ItemProvider;
-            }
-        }
-        #endregion
-
-        #region CloneList
-        private List<String> CloneList(List<String> list) {
-            List<String> list2 = new List<String>();
-            foreach (string item in list) {
-                list2.Add(item);
-            }
-            return list2;
-        }
-        #endregion
 
         #region Contains
         /// <summary>
@@ -1183,7 +1174,7 @@ namespace Kucl.Xml {
         /// このXmlContentsで使用するXmlContentsItemProviderクラスのインスタンスを生成します。
         /// </summary>
         /// <returns></returns>
-        protected virtual XmlContentsItemProvider CreateXmlContentsItemProvider() {
+        public virtual XmlContentsItemProvider CreateXmlContentsItemProvider() {
             return new XmlContentsItemProvider();
         }
 
@@ -1201,7 +1192,7 @@ namespace Kucl.Xml {
         /// <summary>
         /// シリアル化する際のルートエレメント名を取得します。
         /// </summary>
-        protected virtual string ItemRootElement {
+        public virtual string ItemRootElement {
             get {
                 return "Item";
             }
@@ -1210,7 +1201,7 @@ namespace Kucl.Xml {
         /// シリアル化する際のルートエレメントが持つ属性名を取得します。
         /// この属性はこのエレメントの名前を表します。
         /// </summary>
-        protected virtual string ItemRootNameAttribute {
+        public virtual string ItemRootNameAttribute {
             get {
                 return "Name";
             }
@@ -1219,7 +1210,7 @@ namespace Kucl.Xml {
         /// シリアル化する際のルートエレメントが持つ属性名を取得します。
         /// この属性はこのエレメントの型名を表します。
         /// </summary>
-        protected virtual string ItemRootTypeAttribute {
+        public virtual string ItemRootTypeAttribute {
             get {
                 return "Type";
             }
@@ -1437,6 +1428,9 @@ namespace Kucl.Xml {
             get {
                 return this.m_Name;
             }
+            set {
+                this.m_Name = value;
+            }
         }
         /// <summary>
         /// XmlContents値の型名を取得します。
@@ -1535,7 +1529,7 @@ namespace Kucl.Xml {
         /// シリアル化する際の子エレメント名を取得します。
         /// 子エレメントの値はその他の子エレメントの個数を表します。
         /// </summary>
-        protected virtual string ItemCountElement {
+        public virtual string ItemCountElement {
             get {
                 return "Count";
             }

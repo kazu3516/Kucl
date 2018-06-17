@@ -21,20 +21,26 @@ namespace Kucl.Xml.XmlCfg {
     /// </summary>
     public class XmlConfigModel : XmlContentsModel {
 
+        #region コンストラクタ
         /// <summary>
         /// XmlConfigModelクラスの新しいインスタンスを初期化します。
         /// </summary>
         public XmlConfigModel()
             : base() {
         }
+        #endregion
+
+        #region オーバーライド
         /// <summary>
         /// XmlConfigPackageクラスのインスタンスを生成します。
         /// </summary>
         /// <param name="packageName"></param>
         /// <returns></returns>
-        protected override XmlContentsPackage CreateXmlContentsPackage(string packageName) {
+        public override XmlContentsPackage CreateXmlContentsPackage(string packageName) {
             return new XmlConfigPackage(packageName);
         }
+        #endregion
+
     }
 
     #endregion
@@ -45,6 +51,19 @@ namespace Kucl.Xml.XmlCfg {
     /// 基本動作はXmlContentsPackageに従います。
     /// </summary>
     public class XmlConfigPackage : XmlContentsPackage {
+
+        #region 定数扱いのプロパティ(派生クラスのみ変更可)
+        /// <summary>
+        /// XmlConfigPackageをシリアル化する際のルートエレメント名を取得
+        /// </summary>
+        public override string PackageRootElement {
+            get {
+                return "ConfigPackage";
+            }
+        }
+        #endregion
+
+        #region コンストラクタ
         /// <summary>
         /// 名前を指定して、XmlConfigPackageクラスの新しいインスタンスを初期化します。
         /// </summary>
@@ -58,22 +77,19 @@ namespace Kucl.Xml.XmlCfg {
         public XmlConfigPackage()
             : base() {
         }
-        /// <summary>
-        /// XmlConfigPackageをシリアル化する際のルートエレメント名を取得
-        /// </summary>
-        protected override string PackageRootElement {
-            get {
-                return "ConfigPackage";
-            }
-        }
+        #endregion
+
+        #region オーバーライド
         /// <summary>
         /// XmlConfigSectionクラスのインスタンスを生成します。
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        protected override XmlContents CreateXmlContents(string name) {
+        public override XmlContents CreateXmlContents(string name) {
             return new XmlConfigSection(name);
         }
+        #endregion
+
     }
     #endregion
 
@@ -83,6 +99,19 @@ namespace Kucl.Xml.XmlCfg {
     /// 基本動作はXmlContentsに従います。
     /// </summary>
     public class XmlConfigSection : XmlContents {
+
+        #region 定数扱いのプロパティ(派生クラスのみ変更可)
+        /// <summary>
+        /// XmlConfigSectionをシリアル化する際のルートエレメント名を取得します。
+        /// </summary>
+        public override string ContentsRootElement {
+            get {
+                return "ConfigSection";
+            }
+        }
+        #endregion
+
+        #region コンストラクタ
         /// <summary>
         /// 名前を指定して、XmlConfigSectionクラスの新しいインスタンスを初期化します。
         /// </summary>
@@ -96,21 +125,17 @@ namespace Kucl.Xml.XmlCfg {
         public XmlConfigSection()
             : base() {
         }
-        /// <summary>
-        /// XmlConfigSectionをシリアル化する際のルートエレメント名を取得します。
-        /// </summary>
-        protected override string ContentsRootElement {
-            get {
-                return "ConfigSection";
-            }
-        }
+        #endregion
+
+        #region オーバーライド
         /// <summary>
         /// XmlConfigItemProviderクラスのインスタンスを生成します。
         /// </summary>
         /// <returns></returns>
-        protected override XmlContentsItemProvider CreateXmlContentsItemProvider() {
+        public override XmlContentsItemProvider CreateXmlContentsItemProvider() {
             return new XmlConfigItemProvider();
         }
+        #endregion
     }
     #endregion
 
@@ -120,21 +145,28 @@ namespace Kucl.Xml.XmlCfg {
     /// 基本動作はXmlContentsItemProviderに従います。
     /// </summary>
     public class XmlConfigItemProvider : XmlContentsItemProvider {
+        
+        #region 定数扱いのプロパティ(派生クラスのみ変更可)
+        /// <summary>
+        /// XmlContentsItemをシリアル化する際のルートエレメント名を取得します。
+        /// この文字列はXmlConfigとして使用される場合に適用されます。
+        /// </summary>
+        public override string ItemRootElement {
+            get {
+                return "ConfigItem";
+            }
+        }
+        #endregion
+
+        #region コンストラクタ
         /// <summary>
         /// XmlConfigItemProviderクラスの新しいインスタンスを初期化します。
         /// </summary>
         public XmlConfigItemProvider()
             : base() {
         }
-        /// <summary>
-        /// XmlContentsItemをシリアル化する際のルートエレメント名を取得します。
-        /// この文字列はXmlConfigとして使用される場合に適用されます。
-        /// </summary>
-        protected override string ItemRootElement {
-            get {
-                return "ConfigItem";
-            }
-        }
+        #endregion
+
     }
     #endregion
 
