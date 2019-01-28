@@ -15,6 +15,15 @@ namespace Kucl.Xml {
         #region フィールド(メンバ変数、プロパティ、イベント)
         private Dictionary<XmlContentsItemType, Func<XmlContentsItemWriter>> m_CreateItemWriterTable;
 
+        /// <summary>
+        /// このXmlContentsWriterのバージョンを取得します。
+        /// </summary>
+        protected virtual string Version {
+            get {
+                return "";
+            }
+        }
+
         #endregion
 
         #region コンストラクタ
@@ -206,6 +215,7 @@ namespace Kucl.Xml {
     }
     #endregion
 
+
     #region XmlContentsWriterFactory
     /// <summary>
     /// XmlContentsWriterを生成するファクトリメソッドを提供するクラスです。
@@ -225,6 +235,8 @@ namespace Kucl.Xml {
                         case "":
                         case "0.0":
                             return new XmlContentsWriter_00();
+                        case "1.0":
+                            return new XmlContentsWriter_01();
                     }
                     break;
             }
@@ -233,9 +245,12 @@ namespace Kucl.Xml {
     }
     #endregion
 
+
+    #region XmlContentsWriter_00
     public class XmlContentsWriter_00 : XmlContentsWriter {
 
         #region フィールド(メンバ変数、プロパティ、イベント)
+        protected override string Version => "0.0";
 
         #endregion
 
@@ -244,16 +259,19 @@ namespace Kucl.Xml {
         }
         #endregion
 
+        #region SavePackage
         public override void SavePackage(XmlContentsPackageWriteInfo info) {
             string filename = info.FileName;
             XmlContentsPackage package = info.Package;
-            XmlTextWriter writer = new XmlTextWriter(filename, System.Text.Encoding.UTF8);
-            writer.Formatting = Formatting.Indented;
-            writer.Indentation = 4;
+            XmlTextWriter writer = new XmlTextWriter(filename, Encoding.UTF8) {
+                Formatting = Formatting.Indented,
+                Indentation = 4
+            };
             try {
                 writer.WriteStartDocument();
                 writer.WriteStartElement(package.PackageRootElement);
                 writer.WriteAttributeString(package.PackageRootCountAttribute, package.XmlContentsTable.Count.ToString());
+                writer.WriteAttributeString(package.PackageRootVersionAttribute, this.Version);
                 foreach (XmlContents contents in package.XmlContentsTable.Values) {
                     XmlContentsWriteInfo contentsInfo = new XmlContentsWriteInfo() {
                         Writer = writer,
@@ -271,7 +289,9 @@ namespace Kucl.Xml {
                 }
             }
         }
+        #endregion
 
+        #region SaveContents
         public override void SaveContents(XmlContentsWriteInfo info) {
             XmlTextWriter writer = info.Writer;
             XmlContents contents = info.Contents;
@@ -289,7 +309,9 @@ namespace Kucl.Xml {
             }
             writer.WriteEndElement();
         }
+        #endregion
 
+        #region SaveContentsItem
         public override void SaveContentsItem(XmlContentsItemWriteInfo info) {
             XmlTextWriter writer = info.Writer;
             XmlContentsItemProvider provider = info.ItemProvider;
@@ -306,6 +328,7 @@ namespace Kucl.Xml {
 
             writer.WriteEndElement();
         }
+        #endregion
 
         #region XmlContentsItemWriterの継承とインスタンス生成
 
@@ -329,10 +352,11 @@ namespace Kucl.Xml {
             return new DoubleXmlContentsItemWriter(this);
         }
 
+        #region ContainerXmlContentsItemWriterクラス
         protected class ContainerXmlContentsItemWriter : XmlContentsItemWriter {
             public ContainerXmlContentsItemWriter(XmlContentsWriter parentWriter) : base(parentWriter) {
             }
-            public override void SaveContentsItem(  XmlContentsItemWriteInfo info) {
+            public override void SaveContentsItem(XmlContentsItemWriteInfo info) {
                 XmlTextWriter writer = info.Writer;
                 XmlContentsItem item = info.Item;
                 ContainerXmlContentsItem container = (ContainerXmlContentsItem)item;
@@ -348,44 +372,101 @@ namespace Kucl.Xml {
                 }
             }
         }
+        #endregion
+
+        #region BoolXmlContentsItemWriterクラス
         protected class BoolXmlContentsItemWriter : XmlContentsItemWriter {
             public BoolXmlContentsItemWriter(XmlContentsWriter parentWriter) : base(parentWriter) {
             }
-            public override void SaveContentsItem(  XmlContentsItemWriteInfo info) {
+            public override void SaveContentsItem(XmlContentsItemWriteInfo info) {
                 XmlTextWriter writer = info.Writer;
                 XmlContentsItem item = info.Item;
                 writer.WriteString(item.Value.ToString());
             }
         }
+        #endregion
+
+        #region StringXmlContentsItemWriterクラス
         protected class StringXmlContentsItemWriter : XmlContentsItemWriter {
             public StringXmlContentsItemWriter(XmlContentsWriter parentWriter) : base(parentWriter) {
             }
-            public override void SaveContentsItem(  XmlContentsItemWriteInfo info) {
+            public override void SaveContentsItem(XmlContentsItemWriteInfo info) {
                 XmlTextWriter writer = info.Writer;
                 XmlContentsItem item = info.Item;
                 writer.WriteString(item.Value.ToString());
             }
         }
+        #endregion
+
+        #region IntXmlContentsItemWriterクラス
         protected class IntXmlContentsItemWriter : XmlContentsItemWriter {
             public IntXmlContentsItemWriter(XmlContentsWriter parentWriter) : base(parentWriter) {
             }
-            public override void SaveContentsItem( XmlContentsItemWriteInfo info) {
+            public override void SaveContentsItem(XmlContentsItemWriteInfo info) {
                 XmlTextWriter writer = info.Writer;
                 XmlContentsItem item = info.Item;
                 writer.WriteString(item.Value.ToString());
             }
         }
+        #endregion
+
+        #region DoubleXmlContentsItemWriterクラス
         protected class DoubleXmlContentsItemWriter : XmlContentsItemWriter {
             public DoubleXmlContentsItemWriter(XmlContentsWriter parentWriter) : base(parentWriter) {
             }
-            public override void SaveContentsItem(  XmlContentsItemWriteInfo info) {
+            public override void SaveContentsItem(XmlContentsItemWriteInfo info) {
                 XmlTextWriter writer = info.Writer;
                 XmlContentsItem item = info.Item;
                 writer.WriteString(item.Value.ToString());
             }
-        }
-
+        } 
+        #endregion
 
         #endregion
     }
+    #endregion
+
+    #region XmlContentsWriter_01
+
+    /// <summary>
+    /// XmlContentsWriter Ver1を表すクラスです。
+    /// </summary>
+    public class XmlContentsWriter_01 : XmlContentsWriter_00 {
+
+        //*******************************************************
+        // 変更点
+        //
+        // Ver1はContainerの子Elementの個数の保持方法の変更。
+        // Count要素⇒Count属性とする。
+        //
+        //*******************************************************
+
+        protected override string Version => "1.0";
+
+        protected override XmlContentsItemWriter CreateContainerItemWriter() {
+            return new ContainerXmlContentsItemWriter_01(this);
+        }
+        protected class ContainerXmlContentsItemWriter_01 : ContainerXmlContentsItemWriter {
+            public ContainerXmlContentsItemWriter_01(XmlContentsWriter parentWriter) : base(parentWriter) {
+            }
+            public override void SaveContentsItem(XmlContentsItemWriteInfo info) {
+                XmlTextWriter writer = info.Writer;
+                XmlContentsItem item = info.Item;
+                ContainerXmlContentsItem container = (ContainerXmlContentsItem)item;
+                //writer.WriteElementString(container.ItemCountElement, container.Items.Count.ToString());
+                writer.WriteAttributeString(container.ItemCountElement, container.Items.Count.ToString());
+                foreach (XmlContentsItem item1 in container.Items.Values) {
+                    XmlContentsItemWriteInfo itemInfo = new XmlContentsItemWriteInfo() {
+                        Writer = info.Writer,
+                        ItemProvider = info.ItemProvider,
+                        Item = item1
+                    };
+                    this.ParentWriter.SaveContentsItem(itemInfo);
+                    //this.m_ItemProvider.Save(writer, item1);
+                }
+            }
+        }
+    }
+    #endregion
+
 }

@@ -32,16 +32,39 @@ namespace Kucl.Xml {
         public abstract XmlContents LoadContents(  XmlContentsReadInfo info);
         public abstract XmlContentsItem LoadContentsItem(  XmlContentsItemReadInfo info);
 
-        
+
+        #region protected XmlContentsItemReader
+        /// <summary>
+        /// 個別のアイテムを読み込むクラスです。
+        /// </summary>
         protected abstract class XmlContentsItemReader {
+            /// <summary>
+            /// このXmlContentsItemReaderを保持するXmlContentsReaderへの参照を取得します。
+            /// </summary>
             protected XmlContentsReader ParentReader {
                 get;
             }
+
+            /// <summary>
+            /// このXmlContentsItemReaderが読み取るContentsItemが属性を持つかどうかを取得します。
+            /// 既定ではFalseを返します。Trueを返す必要がある場合、派生クラスのコンストラクタで値を設定します。
+            /// </summary>
+            public bool HaveAttribute {
+                get;
+                protected set;
+            }
             protected XmlContentsItemReader(XmlContentsReader parentReader) {
+                this.HaveAttribute = false;
                 this.ParentReader = parentReader;
             }
+            /// <summary>
+            /// 指定したXmlContentsItemの読み込みを行います。
+            /// </summary>
+            /// <param name="item"></param>
+            /// <param name="info"></param>
             public abstract void LoadContentsItem(XmlContentsItem item, XmlContentsItemReadInfo info);
-        }
+        } 
+        #endregion
 
         protected XmlContentsItemReader CreateItemReader(XmlContentsItemType type) {
             return this.m_CreateItemReaderTable[type]();
@@ -105,6 +128,16 @@ namespace Kucl.Xml {
             set {
                 this.m_Owner = value;
             }
+        }
+        #endregion
+
+        #region PreLoadedPackage
+        /// <summary>
+        /// Version判定のために事前に読み込まれたPackageを表します。
+        /// </summary>
+        public XmlContentsPackage PreLoadedPackage {
+            get;
+            set;
         }
         #endregion
 
@@ -234,6 +267,47 @@ namespace Kucl.Xml {
     #endregion
 
 
+
+    #region PackageVersionReader
+    public class PackageVersionReader {
+
+        #region フィールド(メンバ変数、プロパティ、イベント)
+
+        #endregion
+
+        #region コンストラクタ
+        public PackageVersionReader() {
+        }
+        #endregion
+
+        public string ReadVersion(XmlContentsPackageReadInfo info,out XmlContentsPackage package) {
+            package = info.Owner.CreateXmlContentsPackage(info.PackageName);
+            string filename = info.FileName;
+            XmlTextReader reader = new XmlTextReader(filename);
+            reader.WhitespaceHandling = WhitespaceHandling.Significant;
+            try {
+                while (reader.Read()) {
+                    if (reader.IsStartElement(package.PackageRootElement)) {
+                        string version = reader.GetAttribute(package.PackageRootVersionAttribute);
+                        return version ?? "";
+                    }
+                }
+            }
+            catch (XmlException ex) {
+                System.Diagnostics.Debug.WriteLine(ex.GetType().FullName + "\r\n" + ex.Message);
+                throw;
+            }
+            finally {
+                if (reader != null) {
+                    reader.Close();
+                }
+            }
+            return "";
+        }
+
+    }
+    #endregion
+
     #region XmlContentsReaderFactory
     /// <summary>
     /// XmlContentsReaderを生成するファクトリメソッドを提供するクラスです。
@@ -253,6 +327,8 @@ namespace Kucl.Xml {
                         case "":
                         case "0.0":
                             return new XmlContentsReader_00();
+                        case "1.0":
+                            return new XmlContentsReader_01();
                     }
                     break;
             }
@@ -284,7 +360,9 @@ namespace Kucl.Xml {
         /// <param name="info"></param>
         /// <returns></returns>
         public override XmlContentsPackage LoadPackage(XmlContentsPackageReadInfo info) {
-            XmlContentsPackage package = info.Owner.CreateXmlContentsPackage(info.PackageName);
+            //XmlContentsPackage package = info.Owner.CreateXmlContentsPackage(info.PackageName);
+            //Version判定のために先読みしたPackageを使用する
+            XmlContentsPackage package = info.PreLoadedPackage;
             string filename = info.FileName;
             XmlTextReader reader = new XmlTextReader(filename);
             reader.WhitespaceHandling = WhitespaceHandling.Significant;
@@ -364,10 +442,15 @@ namespace Kucl.Xml {
                     string typeName = reader.GetAttribute(provider.ItemRootTypeAttribute);
                     XmlContentsItemType type = (XmlContentsItemType)Enum.Parse(typeof(XmlContentsItemType), typeName);
                     bool isEmpty = reader.IsEmptyElement;
-                    reader.Read();
                     XmlContentsItem item = provider.GenerateItem(type, name);
                     if (item != null) {
                         XmlContentsItemReader itemReader = this.CreateItemReader(type);
+
+                        if (!itemReader.HaveAttribute) {
+                            //読み取るItemが属性を持っていない場合、Readerを読み進める。
+                            //属性を持っている場合、itemReader.LoadContentsItemメソッド内で属性値を読み取った後にReaderを読み進める。
+                            reader.Read();
+                        }
 
                         itemReader.LoadContentsItem(item, info);
                         //item.Load(reader);
@@ -406,6 +489,7 @@ namespace Kucl.Xml {
             return new DoubleXmlContentsItemReader(this);
         }
 
+        #region ContainerXmlContentsItemReaderクラス
         protected class ContainerXmlContentsItemReader : XmlContentsItemReader {
             public ContainerXmlContentsItemReader(XmlContentsReader parentReader) : base(parentReader) {
             }
@@ -428,6 +512,9 @@ namespace Kucl.Xml {
                 }
             }
         }
+        #endregion
+
+        #region BoolXmlContentsItemReaderクラス
         protected class BoolXmlContentsItemReader : XmlContentsItemReader {
             public BoolXmlContentsItemReader(XmlContentsReader parentReader) : base(parentReader) {
             }
@@ -438,6 +525,9 @@ namespace Kucl.Xml {
                 }
             }
         }
+        #endregion
+
+        #region StringXmlContentsItemReaderkクラス
         protected class StringXmlContentsItemReader : XmlContentsItemReader {
             public StringXmlContentsItemReader(XmlContentsReader parentReader) : base(parentReader) {
             }
@@ -448,6 +538,9 @@ namespace Kucl.Xml {
                 }
             }
         }
+        #endregion
+
+        #region IntXmlContentsItemReaderクラス
         protected class IntXmlContentsItemReader : XmlContentsItemReader {
             public IntXmlContentsItemReader(XmlContentsReader parentReader) : base(parentReader) {
             }
@@ -458,6 +551,9 @@ namespace Kucl.Xml {
                 }
             }
         }
+        #endregion
+
+        #region DoubleXmlContentsItemReaderクラス
         protected class DoubleXmlContentsItemReader : XmlContentsItemReader {
             public DoubleXmlContentsItemReader(XmlContentsReader parentReader) : base(parentReader) {
             }
@@ -467,11 +563,58 @@ namespace Kucl.Xml {
                     item.Value = double.Parse(reader.ReadString());
                 }
             }
-        }
+        } 
         #endregion
 
-    } 
+        #endregion
+
+    }
     #endregion
 
+    #region XmlContentsReader_01
+    public class XmlContentsReader_01 : XmlContentsReader_00 {
 
+        //*******************************************************
+        // 変更点
+        //
+        // Ver1はContainerの子Elementの個数の保持方法の変更。
+        // Count要素⇒Count属性とする。
+        //
+        //*******************************************************
+
+        protected override XmlContentsItemReader CreateContainerItemReader() {
+            return new ContainerXmlContentsItemReader_01(this);
+        }
+
+        protected class ContainerXmlContentsItemReader_01 : ContainerXmlContentsItemReader {
+
+            public ContainerXmlContentsItemReader_01(XmlContentsReader parentReader) : base(parentReader) {
+                this.HaveAttribute = true;
+            }
+
+            public override void LoadContentsItem(XmlContentsItem item, XmlContentsItemReadInfo info) {
+                XmlTextReader reader = info.Reader;
+                ContainerXmlContentsItem container = (ContainerXmlContentsItem)item;
+                try {
+                    //reader.ReadStartElement(container.ItemCountElement);
+                    //int count = int.Parse(reader.ReadString());
+                    //reader.Read();
+                    //NOTE:HaveAttribute=Trueによりreader.Readが必要になったが、Count要素が無くなったため、reader.Readが不要となり、相殺された。
+                    int count = int.Parse(reader.GetAttribute(container.ItemCountElement));
+                    reader.Read();
+                    for (int i = 0; i < count; i++) {
+                        //XmlContentsItem item1 = container.ItemProvider.Load(reader);
+                        XmlContentsItem item1 = this.ParentReader.LoadContentsItem(info);
+                        container.Items.Add(item1.Name, item1);
+                    }
+                }
+                catch (XmlException) {// ex){
+                                      //AppMain.g_AppMain.DebugWrite(ex);
+                    throw;
+                }
+            }
+        }
+    }
+
+    #endregion
 }

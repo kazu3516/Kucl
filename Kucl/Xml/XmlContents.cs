@@ -403,22 +403,29 @@ namespace Kucl.Xml {
             if (!Directory.Exists(dirName)) {
                 throw new DirectoryNotFoundException(string.Format("指定したディレクトリは存在しません。\r\n{0}\r\n", dirName));
             }
+            //packageのVersionを先読みするためのReader
+            PackageVersionReader versionReader = new PackageVersionReader();
+
+            //xmlファイルごとに読み込み
             foreach (string filename in Directory.GetFiles(dirName, "*.xml")) {
                 string pName = packageName != "" ? packageName + "." : "";
                 pName += Path.GetFileNameWithoutExtension(filename);
-                
+
                 //NOTE:XmlContentsReaderの導入により廃止
                 //XmlContentsPackage package = this.CreateXmlContentsPackage(pName);
                 //package.Load(Path.Combine(dirName, filename));
 
                 //TODO:XmlContentsReaderFactoryを使用したインスタンス生成に変更する。バージョン判断のためのPreLoadが必要。
-                XmlContentsReader reader = new XmlContentsReader_00();
                 XmlContentsPackageReadInfo info = new XmlContentsPackageReadInfo() {
                     FileName = filename,
                     PackageName = pName,
                     Owner = this
                 };
-                XmlContentsPackage package = reader.LoadPackage(info);
+                string version = versionReader.ReadVersion(info, out XmlContentsPackage package);
+                info.PreLoadedPackage = package;
+                //XmlContentsReader reader = new XmlContentsReader_01();
+                XmlContentsReader reader = XmlContentsReaderFactory.Create("", version);
+                package = reader.LoadPackage(info);
 
                 //読み込んだXmlContentsPackageを追加
                 this.AddPackage(package);
@@ -460,7 +467,12 @@ namespace Kucl.Xml {
                 //NOTE:XmlContentsWriterの導入により廃止
                 //package.Save(filename);
 
-                XmlContentsWriter writer = new XmlContentsWriter_00();
+                //XmlContentsWriter writer = new XmlContentsWriter_00();
+
+                //基本、書き込みは最新バージョンでOK
+                //（必ず読み込みとセットになるため、Ver1.0で書き込みしたアプリケーションはVer1.0の読み込みができる。）
+                string version = "1.0";
+                XmlContentsWriter writer = XmlContentsWriterFactory.Create("", version);
                 XmlContentsPackageWriteInfo info = new XmlContentsPackageWriteInfo() {
                     FileName = filename,
                     Package = package
@@ -513,6 +525,15 @@ namespace Kucl.Xml {
         public virtual string PackageRootCountAttribute {
             get {
                 return "Count";
+            }
+        }
+        /// <summary>
+        /// シリアル化する際のルートエレメントが持つ属性名を取得します。
+        /// この属性はパッケージのシリアル化方法のVersionを表します。
+        /// </summary>
+        public virtual string PackageRootVersionAttribute {
+            get {
+                return "Version";
             }
         }
         #endregion
@@ -748,6 +769,8 @@ namespace Kucl.Xml {
         #endregion
 
         #region ファイル入出力
+        //NOTE:ファイルフォーマットのバージョンを導入するため、Packageに直接Saveメソッドを持たせる設計は廃止。XmlContentsReader/Writerを使用する。
+
         /// <summary>
         /// ファイル名を指定してXmlContentsパッケージをファイルに保存します。
         /// </summary>
@@ -1163,6 +1186,8 @@ namespace Kucl.Xml {
         #endregion
 
         #region ファイル入出力
+        //NOTE:ファイルフォーマットのバージョンを導入するため、Packageに直接Saveメソッドを持たせる設計は廃止。XmlContentsReader/Writerを使用する。
+
         internal void SaveFile(XmlTextWriter writer) {
             writer.WriteStartElement(ContentsRootElement);
             writer.WriteAttributeString(ContentsRootNameAttribute, this.Name);
