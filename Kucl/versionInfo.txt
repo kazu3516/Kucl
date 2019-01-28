@@ -50,3 +50,7 @@
 1.1.0.0
   GitHubに公開
   ListOperationクラスを追加
+
+1.2.0.0
+　XmlContentsModelのシリアル化をVersionにより切り替えられるように変更。
+　これにより、古いフォーマットのXmlContentsModelを読み込むことが可能になった。
