@@ -61,14 +61,26 @@ namespace Kucl.Xml {
         }
         #endregion
 
+        /// <summary>
+        /// PackageNameを返します。
+        /// </summary>
+        /// <returns></returns>
         public string GetPackageNameString() {
             return XmlContentsPathProvider.GetPathString(this.m_PackageName);
         }
 
+        /// <summary>
+        /// RootPathを返します。
+        /// </summary>
+        /// <returns></returns>
         public string GetContentsRootPath() {
             return this.m_Path[0];
         }
 
+        /// <summary>
+        /// Item名を返します。
+        /// </summary>
+        /// <returns></returns>
         public string GetItemName() {
             return this.m_Path[this.m_Path.Length - 1];
         }
@@ -1266,6 +1278,9 @@ namespace Kucl.Xml {
         #endregion
 
         #region フィールド(メンバ変数、プロパティ、イベント)
+        /// <summary>
+        /// XmlContentsItemを生成するメソッドのテーブルを表します。
+        /// </summary>
         protected Dictionary<XmlContentsItemType, Func<string, XmlContentsItem>> m_GenerateItemTable;
         #endregion
 

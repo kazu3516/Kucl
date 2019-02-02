@@ -27,6 +27,9 @@ namespace Kucl.Xml {
         #endregion
 
         #region コンストラクタ
+        /// <summary>
+        /// XmlContentsWriterオブジェクトの新しいインスタンスを初期化します。
+        /// </summary>
         protected XmlContentsWriter() {
             this.m_CreateItemWriterTable = new Dictionary<XmlContentsItemType, Func<XmlContentsItemWriter>>() {
                 { XmlContentsItemType.Container ,this.CreateContainerItemWriter},
@@ -38,27 +41,78 @@ namespace Kucl.Xml {
         }
         #endregion
 
+        /// <summary>
+        /// 派生クラスでオーバーライドされると、Packageの保存を行うメソッドを定義します。
+        /// </summary>
+        /// <param name="info"></param>
         public abstract void SavePackage(XmlContentsPackageWriteInfo info);
+        /// <summary>
+        /// 派生クラスでオーバーライドされると、Contentsの保存を行うメソッドを定義します。
+        /// </summary>
+        /// <param name="info"></param>
         public abstract void SaveContents(XmlContentsWriteInfo info);
+        /// <summary>
+        /// 派生クラスでオーバーライドされると、ContentsItemの保存を行うメソッドを定義します。
+        /// </summary>
+        /// <param name="info"></param>
         public abstract void SaveContentsItem(XmlContentsItemWriteInfo info);
 
+        /// <summary>
+        /// XmlContentsItemの保存を行うクラスです。
+        /// </summary>
         protected abstract class XmlContentsItemWriter {
+            /// <summary>
+            /// このWriterの親となるXmlContentsWriterを取得します。
+            /// </summary>
             protected XmlContentsWriter ParentWriter {
                 get;
             }
+            /// <summary>
+            /// XmlContentsItemWriterオブジェクトの新しいインスタンスを初期化します。
+            /// </summary>
+            /// <param name="parentWriter"></param>
             protected XmlContentsItemWriter(XmlContentsWriter parentWriter) {
                 this.ParentWriter = parentWriter;
             }
+            /// <summary>
+            /// 派生クラスでオーバーライドされると、ContentsItemの保存を行うメソッドを定義します。
+            /// </summary>
+            /// <param name="info"></param>
             public abstract void SaveContentsItem( XmlContentsItemWriteInfo info);
         }
 
+        /// <summary>
+        /// 指定したタイプに対応するXmlContentsItemWriterを返します。
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         protected XmlContentsItemWriter CreateItemWriter(XmlContentsItemType type) {
             return this.m_CreateItemWriterTable[type]();
         }
+        /// <summary>
+        /// ContainerItemWriterを返します。
+        /// </summary>
+        /// <returns></returns>
         protected abstract XmlContentsItemWriter CreateContainerItemWriter();
+        /// <summary>
+        /// BoolItemWriterを返します。
+        /// </summary>
+        /// <returns></returns>
         protected abstract XmlContentsItemWriter CreateBoolItemWriter();
+        /// <summary>
+        /// StringItemWriterを返します。
+        /// </summary>
+        /// <returns></returns>
         protected abstract XmlContentsItemWriter CreateStringItemWriter();
+        /// <summary>
+        /// IntItemWriterを返します。
+        /// </summary>
+        /// <returns></returns>
         protected abstract XmlContentsItemWriter CreateIntItemWriter();
+        /// <summary>
+        /// DoubleItemWriterを返します。
+        /// </summary>
+        /// <returns></returns>
         protected abstract XmlContentsItemWriter CreateDoubleItemWriter();
 
     }
@@ -66,6 +120,9 @@ namespace Kucl.Xml {
 
 
     #region XmlContentsPackageWriteInfo
+    /// <summary>
+    /// XmlContentsPackageの書き込み情報を表すクラスです。
+    /// </summary>
     public class XmlContentsPackageWriteInfo {
 
         #region フィールド(メンバ変数、プロパティ、イベント)
@@ -103,6 +160,9 @@ namespace Kucl.Xml {
         #endregion
 
         #region コンストラクタ
+        /// <summary>
+        /// XmlContentsPackageWriteInfoオブジェクトの新しいインスタンスを初期化します。
+        /// </summary>
         public XmlContentsPackageWriteInfo() {
         }
         #endregion
@@ -111,6 +171,9 @@ namespace Kucl.Xml {
     #endregion
 
     #region XmlContentsWriteInfo
+    /// <summary>
+    /// XmlContentsの書き込み情報を表すクラスです。
+    /// </summary>
     public class XmlContentsWriteInfo {
 
         #region フィールド(メンバ変数、プロパティ、イベント)
@@ -148,6 +211,9 @@ namespace Kucl.Xml {
         #endregion
 
         #region コンストラクタ
+        /// <summary>
+        /// XmlContentsWriteInfoオブジェクトの新しいインスタンスを初期化します。
+        /// </summary>
         public XmlContentsWriteInfo() {
         }
         #endregion
@@ -156,6 +222,9 @@ namespace Kucl.Xml {
     #endregion
 
     #region XmlContentsItemWriteInfo
+    /// <summary>
+    /// XmlContentsItemの書き込み情報を表すクラスです。
+    /// </summary>
     public class XmlContentsItemWriteInfo {
 
         #region フィールド(メンバ変数、プロパティ、イベント)
@@ -208,6 +277,9 @@ namespace Kucl.Xml {
         #endregion
 
         #region コンストラクタ
+        /// <summary>
+        /// XmlContentsItemWriteInfoオブジェクトの新しいインスタンスを初期化します。
+        /// </summary>
         public XmlContentsItemWriteInfo() {
         }
         #endregion
@@ -247,19 +319,33 @@ namespace Kucl.Xml {
 
 
     #region XmlContentsWriter_00
+    /// <summary>
+    /// XmlContentsWriterのVersion0を表すクラスです。
+    /// </summary>
     public class XmlContentsWriter_00 : XmlContentsWriter {
 
         #region フィールド(メンバ変数、プロパティ、イベント)
+        /// <summary>
+        /// Package書き込みバージョンを表します。
+        /// このプロパティをオーバーライドすることでバージョンの切り替えを行います。
+        /// </summary>
         protected override string Version => "0.0";
 
         #endregion
 
         #region コンストラクタ
+        /// <summary>
+        /// XmlContentsWriter_00オブジェクトの新しいインスタンスを初期化します。
+        /// </summary>
         public XmlContentsWriter_00() {
         }
         #endregion
 
         #region SavePackage
+        /// <summary>
+        /// Packageを保存します。
+        /// </summary>
+        /// <param name="info"></param>
         public override void SavePackage(XmlContentsPackageWriteInfo info) {
             string filename = info.FileName;
             XmlContentsPackage package = info.Package;
@@ -292,6 +378,10 @@ namespace Kucl.Xml {
         #endregion
 
         #region SaveContents
+        /// <summary>
+        /// Contentsを保存します。
+        /// </summary>
+        /// <param name="info"></param>
         public override void SaveContents(XmlContentsWriteInfo info) {
             XmlTextWriter writer = info.Writer;
             XmlContents contents = info.Contents;
@@ -312,6 +402,10 @@ namespace Kucl.Xml {
         #endregion
 
         #region SaveContentsItem
+        /// <summary>
+        /// ContentsItemを保存します。
+        /// </summary>
+        /// <param name="info"></param>
         public override void SaveContentsItem(XmlContentsItemWriteInfo info) {
             XmlTextWriter writer = info.Writer;
             XmlContentsItemProvider provider = info.ItemProvider;
@@ -332,30 +426,61 @@ namespace Kucl.Xml {
 
         #region XmlContentsItemWriterの継承とインスタンス生成
 
+        /// <summary>
+        /// ContainerItemWriterを返します。
+        /// </summary>
+        /// <returns></returns>
         protected override XmlContentsItemWriter CreateContainerItemWriter() {
             return new ContainerXmlContentsItemWriter(this);
         }
 
+        /// <summary>
+        /// BoolItemWriterを返します。
+        /// </summary>
+        /// <returns></returns>
         protected override XmlContentsItemWriter CreateBoolItemWriter() {
             return new BoolXmlContentsItemWriter(this);
         }
 
+        /// <summary>
+        /// StringItemWriterを返します。
+        /// </summary>
+        /// <returns></returns>
         protected override XmlContentsItemWriter CreateStringItemWriter() {
             return new StringXmlContentsItemWriter(this);
         }
 
+        /// <summary>
+        /// IntItemWriterを返します。
+        /// </summary>
+        /// <returns></returns>
         protected override XmlContentsItemWriter CreateIntItemWriter() {
             return new IntXmlContentsItemWriter(this);
         }
 
+        /// <summary>
+        /// DoubleItemWriterを返します。
+        /// </summary>
+        /// <returns></returns>
         protected override XmlContentsItemWriter CreateDoubleItemWriter() {
             return new DoubleXmlContentsItemWriter(this);
         }
 
         #region ContainerXmlContentsItemWriterクラス
+        /// <summary>
+        /// ContainerXmlContentsItemの保存を行うクラスです。
+        /// </summary>
         protected class ContainerXmlContentsItemWriter : XmlContentsItemWriter {
+            /// <summary>
+            /// ContainerXmlContentsItemWriterオブジェクトの新しいインスタンスを初期化します。
+            /// </summary>
+            /// <param name="parentWriter"></param>
             public ContainerXmlContentsItemWriter(XmlContentsWriter parentWriter) : base(parentWriter) {
             }
+            /// <summary>
+            /// ContentsItemの保存を行います。
+            /// </summary>
+            /// <param name="info"></param>
             public override void SaveContentsItem(XmlContentsItemWriteInfo info) {
                 XmlTextWriter writer = info.Writer;
                 XmlContentsItem item = info.Item;
@@ -375,9 +500,20 @@ namespace Kucl.Xml {
         #endregion
 
         #region BoolXmlContentsItemWriterクラス
+        /// <summary>
+        /// BoolXmlContentsItemの保存を行うクラスです。
+        /// </summary>
         protected class BoolXmlContentsItemWriter : XmlContentsItemWriter {
+            /// <summary>
+            /// BoolXmlContentsItemWriterオブジェクトの新しいインスタンスを初期化します。
+            /// </summary>
+            /// <param name="parentWriter"></param>
             public BoolXmlContentsItemWriter(XmlContentsWriter parentWriter) : base(parentWriter) {
             }
+            /// <summary>
+            /// ContentsItemの保存を行います。
+            /// </summary>
+            /// <param name="info"></param>
             public override void SaveContentsItem(XmlContentsItemWriteInfo info) {
                 XmlTextWriter writer = info.Writer;
                 XmlContentsItem item = info.Item;
@@ -387,9 +523,20 @@ namespace Kucl.Xml {
         #endregion
 
         #region StringXmlContentsItemWriterクラス
+        /// <summary>
+        /// StringXmlContentsItemの保存を行うクラスです。
+        /// </summary>
         protected class StringXmlContentsItemWriter : XmlContentsItemWriter {
+            /// <summary>
+            /// StringXmlContentsItemWriterオブジェクトの新しいインスタンスを初期化します。
+            /// </summary>
+            /// <param name="parentWriter"></param>
             public StringXmlContentsItemWriter(XmlContentsWriter parentWriter) : base(parentWriter) {
             }
+            /// <summary>
+            /// ContentsItemの保存を行います。
+            /// </summary>
+            /// <param name="info"></param>
             public override void SaveContentsItem(XmlContentsItemWriteInfo info) {
                 XmlTextWriter writer = info.Writer;
                 XmlContentsItem item = info.Item;
@@ -399,9 +546,20 @@ namespace Kucl.Xml {
         #endregion
 
         #region IntXmlContentsItemWriterクラス
+        /// <summary>
+        /// IntXmlContentsItemの保存を行うクラスです。
+        /// </summary>
         protected class IntXmlContentsItemWriter : XmlContentsItemWriter {
+            /// <summary>
+            /// IntXmlContentsItemWriterオブジェクトの新しいインスタンスを初期化します。
+            /// </summary>
+            /// <param name="parentWriter"></param>
             public IntXmlContentsItemWriter(XmlContentsWriter parentWriter) : base(parentWriter) {
             }
+            /// <summary>
+            /// ContentsItemの保存を行います。
+            /// </summary>
+            /// <param name="info"></param>
             public override void SaveContentsItem(XmlContentsItemWriteInfo info) {
                 XmlTextWriter writer = info.Writer;
                 XmlContentsItem item = info.Item;
@@ -411,9 +569,21 @@ namespace Kucl.Xml {
         #endregion
 
         #region DoubleXmlContentsItemWriterクラス
+        /// <summary>
+        /// DoubleXmlContentsItemの保存を行うクラスです。
+        /// </summary>
         protected class DoubleXmlContentsItemWriter : XmlContentsItemWriter {
+            /// <summary>
+            /// DoubleXmlContentsItemWriterオブジェクトの新しいインスタンスを初期化します。
+            /// </summary>
+            /// <param name="parentWriter"></param>
             public DoubleXmlContentsItemWriter(XmlContentsWriter parentWriter) : base(parentWriter) {
             }
+
+            /// <summary>
+            /// ContentsItemの保存を行います。
+            /// </summary>
+            /// <param name="info"></param>
             public override void SaveContentsItem(XmlContentsItemWriteInfo info) {
                 XmlTextWriter writer = info.Writer;
                 XmlContentsItem item = info.Item;
@@ -441,14 +611,33 @@ namespace Kucl.Xml {
         //
         //*******************************************************
 
+        /// <summary>
+        /// Package書き込みバージョンを表します。
+        /// このプロパティをオーバーライドすることでバージョンの切り替えを行います。
+        /// </summary>
         protected override string Version => "1.0";
 
+        /// <summary>
+        /// ContainerItemWriterを返します。
+        /// </summary>
+        /// <returns></returns>
         protected override XmlContentsItemWriter CreateContainerItemWriter() {
             return new ContainerXmlContentsItemWriter_01(this);
         }
+        /// <summary>
+        /// ContainerXmlContentsItemの保存を行うクラスです。
+        /// </summary>
         protected class ContainerXmlContentsItemWriter_01 : ContainerXmlContentsItemWriter {
+            /// <summary>
+            /// ContainerXmlContentsItemWriter_01オブジェクトの新しいインスタンスを初期化します。
+            /// </summary>
+            /// <param name="parentWriter"></param>
             public ContainerXmlContentsItemWriter_01(XmlContentsWriter parentWriter) : base(parentWriter) {
             }
+            /// <summary>
+            /// ContentsItemの保存を行います。
+            /// </summary>
+            /// <param name="info"></param>
             public override void SaveContentsItem(XmlContentsItemWriteInfo info) {
                 XmlTextWriter writer = info.Writer;
                 XmlContentsItem item = info.Item;

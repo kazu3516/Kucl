@@ -17,6 +17,9 @@ namespace Kucl.Xml {
         #endregion
 
         #region コンストラクタ
+        /// <summary>
+        /// XmlContentsReaderオブジェクトの新しいインスタンスを初期化します。
+        /// </summary>
         protected XmlContentsReader() {
             this.m_CreateItemReaderTable = new Dictionary<XmlContentsItemType, Func<XmlContentsItemReader>>() {
                 { XmlContentsItemType.Container ,this.CreateContainerItemReader},
@@ -28,8 +31,23 @@ namespace Kucl.Xml {
         }
         #endregion
 
+        /// <summary>
+        /// 派生クラスでオーバーライドされると、パッケージの読み込みを行うメソッドを定義します。
+        /// </summary>
+        /// <param name="info"></param>
+        /// <returns></returns>
         public abstract XmlContentsPackage LoadPackage(  XmlContentsPackageReadInfo info);
+        /// <summary>
+        /// 派生クラスでオーバーライドされると、XmlContentsの読み込みを行うメソッドを定義します。
+        /// </summary>
+        /// <param name="info"></param>
+        /// <returns></returns>
         public abstract XmlContents LoadContents(  XmlContentsReadInfo info);
+        /// <summary>
+        /// 派生クラスでオーバーライドされると、XmlContentsItemの読み込みを行うメソッドを定義します。
+        /// </summary>
+        /// <param name="info"></param>
+        /// <returns></returns>
         public abstract XmlContentsItem LoadContentsItem(  XmlContentsItemReadInfo info);
 
 
@@ -53,6 +71,10 @@ namespace Kucl.Xml {
                 get;
                 protected set;
             }
+            /// <summary>
+            /// XmlContentsItemReaderオブジェクトの新しいインスタンスを初期化します。
+            /// </summary>
+            /// <param name="parentReader"></param>
             protected XmlContentsItemReader(XmlContentsReader parentReader) {
                 this.HaveAttribute = false;
                 this.ParentReader = parentReader;
@@ -66,13 +88,39 @@ namespace Kucl.Xml {
         } 
         #endregion
 
+        /// <summary>
+        /// 指定したTypeに対応するXmlContentsItemReaderを返します。
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         protected XmlContentsItemReader CreateItemReader(XmlContentsItemType type) {
             return this.m_CreateItemReaderTable[type]();
         }
+
+        /// <summary>
+        /// ContainerItemReaderの生成メソッドを返します。
+        /// </summary>
+        /// <returns></returns>
         protected abstract XmlContentsItemReader CreateContainerItemReader();
+        /// <summary>
+        /// BoolItemReaderの生成メソッドを返します。
+        /// </summary>
+        /// <returns></returns>
         protected abstract XmlContentsItemReader CreateBoolItemReader();
+        /// <summary>
+        /// StringItemReaderの生成メソッドを返します。
+        /// </summary>
+        /// <returns></returns>
         protected abstract XmlContentsItemReader CreateStringItemReader();
+        /// <summary>
+        /// IntItemReaderの生成メソッドを返します。
+        /// </summary>
+        /// <returns></returns>
         protected abstract XmlContentsItemReader CreateIntItemReader();
+        /// <summary>
+        /// DoubleItemReaderの生成メソッドを返します。
+        /// </summary>
+        /// <returns></returns>
         protected abstract XmlContentsItemReader CreateDoubleItemReader();
     }
     #endregion
@@ -144,6 +192,9 @@ namespace Kucl.Xml {
         #endregion
 
         #region コンストラクタ
+        /// <summary>
+        /// XmlContentsPackageReadInfoオブジェクトの新しいインスタンスを初期化します。
+        /// </summary>
         public XmlContentsPackageReadInfo() {
         }
         #endregion
@@ -192,6 +243,9 @@ namespace Kucl.Xml {
         #endregion
 
         #region コンストラクタ
+        /// <summary>
+        /// XmlContentsReadInfoオブジェクトの新しいインスタンスを初期化します。
+        /// </summary>
         public XmlContentsReadInfo() {
         }
         #endregion
@@ -258,6 +312,9 @@ namespace Kucl.Xml {
         #endregion
 
         #region コンストラクタ
+        /// <summary>
+        /// XmlContentsItemReadInfoオブジェクトの新しいインスタンスを初期化します。
+        /// </summary>
         public XmlContentsItemReadInfo() {
         }
         #endregion
@@ -269,6 +326,9 @@ namespace Kucl.Xml {
 
 
     #region PackageVersionReader
+    /// <summary>
+    /// PackageのVersionを先読みするためのクラスです。
+    /// </summary>
     public class PackageVersionReader {
 
         #region フィールド(メンバ変数、プロパティ、イベント)
@@ -276,10 +336,19 @@ namespace Kucl.Xml {
         #endregion
 
         #region コンストラクタ
+        /// <summary>
+        /// PackageVersionReaderオブジェクトの新しいインスタンスを初期化します。
+        /// </summary>
         public PackageVersionReader() {
         }
         #endregion
 
+        /// <summary>
+        /// PackageのVersionを読み込みます。
+        /// </summary>
+        /// <param name="info"></param>
+        /// <param name="package"></param>
+        /// <returns></returns>
         public string ReadVersion(XmlContentsPackageReadInfo info,out XmlContentsPackage package) {
             package = info.Owner.CreateXmlContentsPackage(info.PackageName);
             string filename = info.FileName;
@@ -349,6 +418,9 @@ namespace Kucl.Xml {
         #endregion
 
         #region コンストラクタ
+        /// <summary>
+        /// XmlContentsReader_00オブジェクトの新しいインスタンスを初期化します。
+        /// </summary>
         public XmlContentsReader_00() : base() {
         }
         #endregion
@@ -473,26 +545,58 @@ namespace Kucl.Xml {
         #endregion
 
         #region XmlContentsItemReaderの継承とインスタンス生成
+        /// <summary>
+        /// ContainerItemReaderの生成メソッドを返します。
+        /// </summary>
+        /// <returns></returns>
         protected override XmlContentsItemReader CreateContainerItemReader() {
             return new ContainerXmlContentsItemReader(this);
         }
+        /// <summary>
+        /// BoolItemReaderの生成メソッドを返します。
+        /// </summary>
+        /// <returns></returns>
         protected override XmlContentsItemReader CreateBoolItemReader() {
             return new BoolXmlContentsItemReader(this);
         }
+        /// <summary>
+        /// StringItemReaderの生成メソッドを返します。
+        /// </summary>
+        /// <returns></returns>
         protected override XmlContentsItemReader CreateStringItemReader() {
             return new StringXmlContentsItemReader(this);
         }
+        /// <summary>
+        /// IntItemReaderの生成メソッドを返します。
+        /// </summary>
+        /// <returns></returns>
         protected override XmlContentsItemReader CreateIntItemReader() {
             return new IntXmlContentsItemReader(this);
         }
+        /// <summary>
+        /// DoubleItemReaderの生成メソッドを返します。
+        /// </summary>
+        /// <returns></returns>
         protected override XmlContentsItemReader CreateDoubleItemReader() {
             return new DoubleXmlContentsItemReader(this);
         }
 
         #region ContainerXmlContentsItemReaderクラス
+        /// <summary>
+        /// ContainerXmlContentsItemを読み込むリーダーを表すクラスです。
+        /// </summary>
         protected class ContainerXmlContentsItemReader : XmlContentsItemReader {
+            /// <summary>
+            /// ContainerXmlContentsItemReaderオブジェクトの新しいインスタンスを初期化します。
+            /// </summary>
+            /// <param name="parentReader"></param>
             public ContainerXmlContentsItemReader(XmlContentsReader parentReader) : base(parentReader) {
             }
+            /// <summary>
+            /// ContentsItemを読み込みます。
+            /// </summary>
+            /// <param name="item"></param>
+            /// <param name="info"></param>
             public override void LoadContentsItem(XmlContentsItem item, XmlContentsItemReadInfo info) {
                 XmlTextReader reader = info.Reader;
                 ContainerXmlContentsItem container = (ContainerXmlContentsItem)item;
@@ -515,9 +619,21 @@ namespace Kucl.Xml {
         #endregion
 
         #region BoolXmlContentsItemReaderクラス
+        /// <summary>
+        /// BoolXmlContentsItemを読み込むリーダーを表すクラスです。
+        /// </summary>
         protected class BoolXmlContentsItemReader : XmlContentsItemReader {
+            /// <summary>
+            /// BoolXmlContentsItemReaderオブジェクトの新しいインスタンスを初期化します。
+            /// </summary>
+            /// <param name="parentReader"></param>
             public BoolXmlContentsItemReader(XmlContentsReader parentReader) : base(parentReader) {
             }
+            /// <summary>
+            /// ContentsItemを読み込みます。
+            /// </summary>
+            /// <param name="item"></param>
+            /// <param name="info"></param>
             public override void LoadContentsItem(XmlContentsItem item, XmlContentsItemReadInfo info) {
                 XmlTextReader reader = info.Reader;
                 if (reader.HasValue) {
@@ -528,9 +644,21 @@ namespace Kucl.Xml {
         #endregion
 
         #region StringXmlContentsItemReaderkクラス
+        /// <summary>
+        /// StringXmlContentsItemを読み込むリーダーを表すクラスです。
+        /// </summary>
         protected class StringXmlContentsItemReader : XmlContentsItemReader {
+            /// <summary>
+            /// StringXmlContentsItemReaderオブジェクトの新しいインスタンスを初期化します。
+            /// </summary>
+            /// <param name="parentReader"></param>
             public StringXmlContentsItemReader(XmlContentsReader parentReader) : base(parentReader) {
             }
+            /// <summary>
+            /// ContentsItemを読み込みます。
+            /// </summary>
+            /// <param name="item"></param>
+            /// <param name="info"></param>
             public override void LoadContentsItem(XmlContentsItem item, XmlContentsItemReadInfo info) {
                 XmlTextReader reader = info.Reader;
                 if (reader.HasValue) {
@@ -541,9 +669,21 @@ namespace Kucl.Xml {
         #endregion
 
         #region IntXmlContentsItemReaderクラス
+        /// <summary>
+        /// IntXmlContentsItemを読み込むリーダーを表すクラスです。
+        /// </summary>
         protected class IntXmlContentsItemReader : XmlContentsItemReader {
+            /// <summary>
+            /// IntXmlContentsItemReaderオブジェクトの新しいインスタンスを初期化します。
+            /// </summary>
+            /// <param name="parentReader"></param>
             public IntXmlContentsItemReader(XmlContentsReader parentReader) : base(parentReader) {
             }
+            /// <summary>
+            /// ContentsItemを読み込みます。
+            /// </summary>
+            /// <param name="item"></param>
+            /// <param name="info"></param>
             public override void LoadContentsItem(XmlContentsItem item, XmlContentsItemReadInfo info) {
                 XmlTextReader reader = info.Reader;
                 if (reader.HasValue) {
@@ -554,9 +694,21 @@ namespace Kucl.Xml {
         #endregion
 
         #region DoubleXmlContentsItemReaderクラス
+        /// <summary>
+        /// DoubleXmlContentsItemを読み込むリーダーを表すクラスです。
+        /// </summary>
         protected class DoubleXmlContentsItemReader : XmlContentsItemReader {
+            /// <summary>
+            /// DoubleXmlContentsItemReaderオブジェクトの新しいインスタンスを初期化します。
+            /// </summary>
+            /// <param name="parentReader"></param>
             public DoubleXmlContentsItemReader(XmlContentsReader parentReader) : base(parentReader) {
             }
+            /// <summary>
+            /// ContentsItemを読み込みます。
+            /// </summary>
+            /// <param name="item"></param>
+            /// <param name="info"></param>
             public override void LoadContentsItem(XmlContentsItem item, XmlContentsItemReadInfo info) {
                 XmlTextReader reader = info.Reader;
                 if (reader.HasValue) {
@@ -572,6 +724,9 @@ namespace Kucl.Xml {
     #endregion
 
     #region XmlContentsReader_01
+    /// <summary>
+    /// XmlContentsReader Version01を表します。
+    /// </summary>
     public class XmlContentsReader_01 : XmlContentsReader_00 {
 
         //*******************************************************
@@ -582,16 +737,32 @@ namespace Kucl.Xml {
         //
         //*******************************************************
 
+        /// <summary>
+        /// ContainerItemReaderの生成メソッドを返します。
+        /// </summary>
+        /// <returns></returns>
         protected override XmlContentsItemReader CreateContainerItemReader() {
             return new ContainerXmlContentsItemReader_01(this);
         }
 
+        /// <summary>
+        /// ContainerXmlContentsItemReaderのVersion1を表します。
+        /// </summary>
         protected class ContainerXmlContentsItemReader_01 : ContainerXmlContentsItemReader {
 
+            /// <summary>
+            /// ContainerXmlContentsItemReader_01オブジェクトの新しいインスタンスを初期化します。
+            /// </summary>
+            /// <param name="parentReader"></param>
             public ContainerXmlContentsItemReader_01(XmlContentsReader parentReader) : base(parentReader) {
                 this.HaveAttribute = true;
             }
 
+            /// <summary>
+            /// ContentsItemを読み込みます。
+            /// </summary>
+            /// <param name="item"></param>
+            /// <param name="info"></param>
             public override void LoadContentsItem(XmlContentsItem item, XmlContentsItemReadInfo info) {
                 XmlTextReader reader = info.Reader;
                 ContainerXmlContentsItem container = (ContainerXmlContentsItem)item;
