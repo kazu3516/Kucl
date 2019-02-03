@@ -910,6 +910,15 @@ namespace Kucl.Xml {
                 return this.m_Root;
             }
         }
+        /// <summary>
+        /// 保持するXmlContentsItemのハッシュテーブルを取得します。
+        /// </summary>
+        public Dictionary<string, XmlContentsItem> Items {
+            get {
+                return this.m_Root.Items;
+            }
+        }
+
 
         private XmlContentsItemProvider m_ItemProvider;
         /// <summary>
