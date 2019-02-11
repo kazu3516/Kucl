@@ -78,7 +78,7 @@ namespace Kucl.Xml {
             /// 派生クラスでオーバーライドされると、ContentsItemの保存を行うメソッドを定義します。
             /// </summary>
             /// <param name="info"></param>
-            public abstract void SaveContentsItem( XmlContentsItemWriteInfo info);
+            public abstract void SaveContentsItem(XmlContentsItemWriteInfo info);
         }
 
         /// <summary>
@@ -179,11 +179,11 @@ namespace Kucl.Xml {
         #region フィールド(メンバ変数、プロパティ、イベント)
 
         #region Writer
-        private XmlTextWriter m_Writer;
+        private XmlWriter m_Writer;
         /// <summary>
         /// Writerを取得、設定します。
         /// </summary>
-        public XmlTextWriter Writer {
+        public XmlWriter Writer {
             get {
                 return this.m_Writer;
             }
@@ -230,11 +230,11 @@ namespace Kucl.Xml {
         #region フィールド(メンバ変数、プロパティ、イベント)
 
         #region Writer
-        private XmlTextWriter m_Writer;
+        private XmlWriter m_Writer;
         /// <summary>
         /// Writerを取得、設定します。
         /// </summary>
-        public XmlTextWriter Writer {
+        public XmlWriter Writer {
             get {
                 return this.m_Writer;
             }
@@ -349,10 +349,9 @@ namespace Kucl.Xml {
         public override void SavePackage(XmlContentsPackageWriteInfo info) {
             string filename = info.FileName;
             XmlContentsPackage package = info.Package;
-            XmlTextWriter writer = new XmlTextWriter(filename, Encoding.UTF8) {
-                Formatting = Formatting.Indented,
-                Indentation = 4
-            };
+            XmlWriter writer = XmlWriter.Create(filename, new XmlWriterSettings() { Indent = true, IndentChars = "\t" });
+
+
             try {
                 writer.WriteStartDocument();
                 writer.WriteStartElement(package.PackageRootElement);
@@ -383,7 +382,7 @@ namespace Kucl.Xml {
         /// </summary>
         /// <param name="info"></param>
         public override void SaveContents(XmlContentsWriteInfo info) {
-            XmlTextWriter writer = info.Writer;
+            XmlWriter writer = info.Writer;
             XmlContents contents = info.Contents;
             writer.WriteStartElement(contents.ContentsRootElement);
             writer.WriteAttributeString(contents.ContentsRootNameAttribute, contents.Name);
@@ -407,7 +406,7 @@ namespace Kucl.Xml {
         /// </summary>
         /// <param name="info"></param>
         public override void SaveContentsItem(XmlContentsItemWriteInfo info) {
-            XmlTextWriter writer = info.Writer;
+            XmlWriter writer = info.Writer;
             XmlContentsItemProvider provider = info.ItemProvider;
             XmlContentsItem item = info.Item;
 
@@ -482,7 +481,7 @@ namespace Kucl.Xml {
             /// </summary>
             /// <param name="info"></param>
             public override void SaveContentsItem(XmlContentsItemWriteInfo info) {
-                XmlTextWriter writer = info.Writer;
+                XmlWriter writer = info.Writer;
                 XmlContentsItem item = info.Item;
                 ContainerXmlContentsItem container = (ContainerXmlContentsItem)item;
                 writer.WriteElementString(container.ItemCountElement, container.Items.Count.ToString());
@@ -515,7 +514,7 @@ namespace Kucl.Xml {
             /// </summary>
             /// <param name="info"></param>
             public override void SaveContentsItem(XmlContentsItemWriteInfo info) {
-                XmlTextWriter writer = info.Writer;
+                XmlWriter writer = info.Writer;
                 XmlContentsItem item = info.Item;
                 writer.WriteString(item.Value.ToString());
             }
@@ -538,9 +537,9 @@ namespace Kucl.Xml {
             /// </summary>
             /// <param name="info"></param>
             public override void SaveContentsItem(XmlContentsItemWriteInfo info) {
-                XmlTextWriter writer = info.Writer;
+                XmlWriter writer = info.Writer;
                 XmlContentsItem item = info.Item;
-                writer.WriteString(item.Value.ToString());
+                writer.WriteString(item.Value?.ToString() ?? "");
             }
         }
         #endregion
@@ -561,7 +560,7 @@ namespace Kucl.Xml {
             /// </summary>
             /// <param name="info"></param>
             public override void SaveContentsItem(XmlContentsItemWriteInfo info) {
-                XmlTextWriter writer = info.Writer;
+                XmlWriter writer = info.Writer;
                 XmlContentsItem item = info.Item;
                 writer.WriteString(item.Value.ToString());
             }
@@ -585,11 +584,11 @@ namespace Kucl.Xml {
             /// </summary>
             /// <param name="info"></param>
             public override void SaveContentsItem(XmlContentsItemWriteInfo info) {
-                XmlTextWriter writer = info.Writer;
+                XmlWriter writer = info.Writer;
                 XmlContentsItem item = info.Item;
                 writer.WriteString(item.Value.ToString());
             }
-        } 
+        }
         #endregion
 
         #endregion
@@ -639,7 +638,7 @@ namespace Kucl.Xml {
             /// </summary>
             /// <param name="info"></param>
             public override void SaveContentsItem(XmlContentsItemWriteInfo info) {
-                XmlTextWriter writer = info.Writer;
+                XmlWriter writer = info.Writer;
                 XmlContentsItem item = info.Item;
                 ContainerXmlContentsItem container = (ContainerXmlContentsItem)item;
                 //writer.WriteElementString(container.ItemCountElement, container.Items.Count.ToString());

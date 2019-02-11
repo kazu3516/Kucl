@@ -61,6 +61,9 @@ namespace Kucl.Test {
         #endregion
 
 
+        public bool UnManagedMode {
+            get; set;
+        }
 
         #endregion
 
@@ -134,6 +137,8 @@ namespace Kucl.Test {
             this.m_Location = new System.Drawing.Point(x, y);
 
             this.m_EnableDetailSettings = this.m_ConfigHelper.GetBoolValue("Kucl.setting:Common.Settings.Detail.Enabled");
+
+            this.UnManagedMode = this.m_ConfigHelper.GetBoolValue("Kucl.setting:Special.Settings.UnManaged");
         }
 
 
@@ -143,6 +148,8 @@ namespace Kucl.Test {
             config.AddXmlContentsItem("Kucl.setting:Common.Location.X", this.m_Location.X);
             config.AddXmlContentsItem("Kucl.setting:Common.Location.Y", this.m_Location.Y);
             config.AddXmlContentsItem("Kucl.setting:Common.Settings.Detail.Enabled", this.m_EnableDetailSettings);
+
+            config.AddXmlContentsItem("Kucl.setting:Special.Settings.UnManaged", this.UnManagedMode);
         }
 
         //既定のConfig
@@ -151,6 +158,7 @@ namespace Kucl.Test {
             config.AddXmlContentsItem("Kucl.setting:Common.Location.X", 10);
             config.AddXmlContentsItem("Kucl.setting:Common.Location.Y", 20);
             config.AddXmlContentsItem("Kucl.setting:Common.Settings.Detail.Enabled", false);
+            config.AddXmlContentsItem("Kucl.setting:Special.Settings.UnManaged", false);
         }
 
 

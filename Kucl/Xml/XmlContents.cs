@@ -8,9 +8,6 @@ using System.Linq;
 
 namespace Kucl.Xml {
 
-    //TODO:ファイルフォーマットのバージョンを含めることができるように変更する
-    //TODO:ファイルフォーマットのバージョンにより入出力を切り替えできるようにする
-
 
     #region XmlContentsPath
     /// <summary>
@@ -161,6 +158,19 @@ namespace Kucl.Xml {
     #endregion
 
 
+
+    //XML要素の文字列を変更したい場合、XmlContentsModel以下のクラスを継承する。
+    //継承により、定数扱いのプロパティをオーバーライド可となる。
+    //各クラスは下位のインスタンス生成メソッドを持つため、継承したクラスのインスタンスを生成するようにオーバーライドする
+    //対象となるクラス
+    //XmlContentsModel
+    //XmlContentsPackage
+    //XmlContents
+    //XmlContentsItemProvider
+    //
+    //
+    //詳細はXmlConfigの実装を参照
+    //
 
     #region XmlContentsModel
     /// <summary>
@@ -433,14 +443,19 @@ namespace Kucl.Xml {
                     PackageName = pName,
                     Owner = this
                 };
-                string version = versionReader.ReadVersion(info, out XmlContentsPackage package);
-                info.PreLoadedPackage = package;
-                //XmlContentsReader reader = new XmlContentsReader_01();
-                XmlContentsReader reader = XmlContentsReaderFactory.Create("", version);
-                package = reader.LoadPackage(info);
+                try {
+                    string version = versionReader.ReadVersion(info, out XmlContentsPackage package);
+                    info.PreLoadedPackage = package;
+                    //XmlContentsReader reader = new XmlContentsReader_01();
+                    XmlContentsReader reader = XmlContentsReaderFactory.Create("", version);
+                    package = reader.LoadPackage(info);
 
-                //読み込んだXmlContentsPackageを追加
-                this.AddPackage(package);
+                    //読み込んだXmlContentsPackageを追加
+                    this.AddPackage(package);
+                }
+                catch (XmlException ex) {
+                    throw new Exception($"ファイルの読み込みに失敗しました。FileName={filename}", ex);
+                }
             }
             foreach (string dir in Directory.GetDirectories(dirName)) {
                 string pName = packageName != "" ? "." : "";
@@ -857,7 +872,7 @@ namespace Kucl.Xml {
 
     #region XmlContents
     /// <summary>
-    /// 設定を表すクラスです。
+    /// XmlContentsパッケージ内のセクションを表すクラスです。
     /// </summary>
     public class XmlContents {
 
@@ -1071,7 +1086,7 @@ namespace Kucl.Xml {
         }
 
         /// <summary>
-        /// 名前を指定して、設定にbool値を追加します。
+        /// 名前を指定して、セクションにbool値を追加します。
         /// </summary>
         /// <param name="name"></param>
         /// <param name="value"></param>
@@ -1081,7 +1096,7 @@ namespace Kucl.Xml {
             this.AddXmlContentsItem(name, item);
         }
         /// <summary>
-        /// 名前を指定して、設定に文字列を追加します。
+        /// 名前を指定して、セクションに文字列を追加します。
         /// </summary>
         /// <param name="name"></param>
         /// <param name="value"></param>
@@ -1091,7 +1106,7 @@ namespace Kucl.Xml {
             this.AddXmlContentsItem(name, item);
         }
         /// <summary>
-        /// 名前を指定して、設定に整数値を追加します。
+        /// 名前を指定して、セクションに整数値を追加します。
         /// </summary>
         /// <param name="name"></param>
         /// <param name="value"></param>
@@ -1101,7 +1116,7 @@ namespace Kucl.Xml {
             this.AddXmlContentsItem(name, item);
         }
         /// <summary>
-        /// 名前を指定して、設定に実数値を追加します。
+        /// 名前を指定して、セクションに実数値を追加します。
         /// </summary>
         /// <param name="name"></param>
         /// <param name="value"></param>
@@ -1111,7 +1126,7 @@ namespace Kucl.Xml {
             this.AddXmlContentsItem(name, item);
         }
         /// <summary>
-        /// 名前を指定して設定にXmlContentsItemを追加します。
+        /// 名前を指定して、セクションにXmlContentsItemを追加します。
         /// </summary>
         /// <param name="name"></param>
         /// <param name="item"></param>
@@ -1120,7 +1135,7 @@ namespace Kucl.Xml {
             this.AddXmlContentsItem(path, item);
         }
         /// <summary>
-        /// XmlContentsPathを指定して、設定にXmlContentsItemを追加します。
+        /// XmlContentsPathを指定して、セクションにXmlContentsItemを追加します。
         /// </summary>
         /// <param name="path"></param>
         /// <param name="item"></param>
