@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Kucl.Collection {
+namespace Kucl.Collections {
 
 	#region CustomCollection
 

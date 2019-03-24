@@ -5,7 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Kucl.Collection;
+using Kucl.Collections;
 
 namespace Kucl.Test {
     public partial class Form1:Form {

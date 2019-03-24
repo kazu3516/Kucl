@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using Kucl.Collection;
+using Kucl.Collections;
 
 namespace Kucl.Test {
     static class Program {
