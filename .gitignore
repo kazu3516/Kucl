@@ -270,3 +270,6 @@ __pycache__/
 
 #User Work
 [Ww]ork/
+
+#Shortcut
+*.lnk
