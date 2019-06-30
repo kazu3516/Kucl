@@ -10,7 +10,7 @@ namespace Kucl.Collections {
     /// <summary>
     /// 要素の変更を監視できるコレクションです。
     /// </summary>
-    public class ObservableList<T> : IList<T> where T : INotifyPropertyChanged {
+    public class ObservableList<T> : IList, IList<T> where T : INotifyPropertyChanged {
 
         #region 移譲するList<T>
         private List<T> List {
@@ -243,7 +243,9 @@ namespace Kucl.Collections {
                 return this.List.Count;
             }
         }
-
+        /// <summary>
+        /// このコレクションがReadOnlyかどうかを返します。
+        /// </summary>
         bool ICollection<T>.IsReadOnly {
             get {
                 return ((IList<T>)this.List).IsReadOnly;
@@ -378,6 +380,78 @@ namespace Kucl.Collections {
         IEnumerator IEnumerable.GetEnumerator() {
             return this.List.GetEnumerator();
         }
+        #endregion
+
+        #region IListの実装
+        /// <summary>
+        /// オブジェクトをコレクションに追加します。
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public int Add(object value) {
+            return ((IList)this.List).Add(value);
+        }
+        /// <summary>
+        /// オブジェクトがコレクションに含まれているかどうかを返します。
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public bool Contains(object value) {
+            return ((IList)this.List).Contains(value);
+        }
+        /// <summary>
+        /// 指定したオブジェクトのコレクション内の位置を返します。
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public int IndexOf(object value) {
+            return ((IList)this.List).IndexOf(value);
+        }
+        /// <summary>
+        /// 位置を指定して、オブジェクトをコレクションに挿入します。
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="value"></param>
+        public void Insert(int index, object value) {
+            ((IList)this.List).Insert(index, value);
+        }
+        /// <summary>
+        /// オブジェクトをコレクションから削除します。
+        /// </summary>
+        /// <param name="value"></param>
+        public void Remove(object value) {
+            ((IList)this.List).Remove(value);
+        }
+        /// <summary>
+        /// indexによって指定したオブジェクトを取得または設定するインデクサです。
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        object IList.this[int index] { get => ((IList)this.List)[index]; set => ((IList)this.List)[index] = value; }
+        /// <summary>
+        /// このコレクションが読み取り専用かどうかを示す値を取得します。
+        /// </summary>
+        public bool IsReadOnly => ((IList)this.List).IsReadOnly;
+        /// <summary>
+        /// このコレクションが固定サイズかどうかを示す値を取得します。
+        /// </summary>
+        public bool IsFixedSize => ((IList)this.List).IsFixedSize;
+        /// <summary>
+        /// このコレクションの要素を配列にコピーします。
+        /// </summary>
+        /// <param name="array"></param>
+        /// <param name="index"></param>
+        public void CopyTo(Array array, int index) {
+            ((IList)this.List).CopyTo(array, index);
+        }
+        /// <summary>
+        /// ICollectionへのアクセスを同期するために使用できるオブジェクトを取得します。
+        /// </summary>
+        public object SyncRoot => ((IList)this.List).SyncRoot;
+        /// <summary>
+        /// このコレクションへのアクセスが同期されている(スレッドセーフである)かどうかを示す値を取得します。
+        /// </summary>
+        public bool IsSynchronized => ((IList)this.List).IsSynchronized;
         #endregion
 
     }
