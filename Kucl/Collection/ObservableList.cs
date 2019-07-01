@@ -388,7 +388,7 @@ namespace Kucl.Collections {
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public int Add(object value) {
+        int IList.Add(object value) {
             return ((IList)this.List).Add(value);
         }
         /// <summary>
@@ -396,7 +396,7 @@ namespace Kucl.Collections {
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public bool Contains(object value) {
+        bool IList.Contains(object value) {
             return ((IList)this.List).Contains(value);
         }
         /// <summary>
@@ -404,7 +404,7 @@ namespace Kucl.Collections {
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public int IndexOf(object value) {
+        int IList.IndexOf(object value) {
             return ((IList)this.List).IndexOf(value);
         }
         /// <summary>
@@ -412,14 +412,14 @@ namespace Kucl.Collections {
         /// </summary>
         /// <param name="index"></param>
         /// <param name="value"></param>
-        public void Insert(int index, object value) {
+        void IList.Insert(int index, object value) {
             ((IList)this.List).Insert(index, value);
         }
         /// <summary>
         /// オブジェクトをコレクションから削除します。
         /// </summary>
         /// <param name="value"></param>
-        public void Remove(object value) {
+        void IList.Remove(object value) {
             ((IList)this.List).Remove(value);
         }
         /// <summary>
@@ -431,27 +431,27 @@ namespace Kucl.Collections {
         /// <summary>
         /// このコレクションが読み取り専用かどうかを示す値を取得します。
         /// </summary>
-        public bool IsReadOnly => ((IList)this.List).IsReadOnly;
+        bool IList.IsReadOnly => ((IList)this.List).IsReadOnly;
         /// <summary>
         /// このコレクションが固定サイズかどうかを示す値を取得します。
         /// </summary>
-        public bool IsFixedSize => ((IList)this.List).IsFixedSize;
+        bool IList.IsFixedSize => ((IList)this.List).IsFixedSize;
         /// <summary>
         /// このコレクションの要素を配列にコピーします。
         /// </summary>
         /// <param name="array"></param>
         /// <param name="index"></param>
-        public void CopyTo(Array array, int index) {
+        void ICollection.CopyTo(Array array, int index) {
             ((IList)this.List).CopyTo(array, index);
         }
         /// <summary>
         /// ICollectionへのアクセスを同期するために使用できるオブジェクトを取得します。
         /// </summary>
-        public object SyncRoot => ((IList)this.List).SyncRoot;
+        object ICollection.SyncRoot => ((IList)this.List).SyncRoot;
         /// <summary>
         /// このコレクションへのアクセスが同期されている(スレッドセーフである)かどうかを示す値を取得します。
         /// </summary>
-        public bool IsSynchronized => ((IList)this.List).IsSynchronized;
+        bool ICollection.IsSynchronized => ((IList)this.List).IsSynchronized;
         #endregion
 
     }
