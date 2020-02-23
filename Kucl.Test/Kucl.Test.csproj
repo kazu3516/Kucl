@@ -51,6 +51,12 @@
   <ItemGroup>
     <Compile Include="AppInfo.cs" />
     <Compile Include="AppMain.cs" />
+    <Compile Include="FileDocumentTestWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FileDocumentTestWindow.Designer.cs">
+      <DependentUpon>FileDocumentTestWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -59,12 +65,15 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="XmlConfigTestWindow.cs">
+    <Compile Include="TestWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="XmlConfigTestWindow.Designer.cs">
-      <DependentUpon>XmlConfigTestWindow.cs</DependentUpon>
+    <Compile Include="TestWindow.Designer.cs">
+      <DependentUpon>TestWindow.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="FileDocumentTestWindow.resx">
+      <DependentUpon>FileDocumentTestWindow.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -81,8 +90,8 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="XmlConfigTestWindow.resx">
-      <DependentUpon>XmlConfigTestWindow.cs</DependentUpon>
+    <EmbeddedResource Include="TestWindow.resx">
+      <DependentUpon>TestWindow.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="App.config" />
     <None Include="packages.config" />

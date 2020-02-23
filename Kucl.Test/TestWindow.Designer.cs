@@ -1,5 +1,5 @@
 ﻿namespace Kucl.Test {
-    partial class XmlConfigTestWindow {
+    partial class TestWindow {
         /// <summary>
         /// Required designer variable.
         /// </summary>
@@ -30,9 +30,9 @@
             // button1
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Location = new System.Drawing.Point(467, 12);
+            this.button1.Location = new System.Drawing.Point(12, 12);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(140, 44);
+            this.button1.Size = new System.Drawing.Size(140, 23);
             this.button1.TabIndex = 0;
             this.button1.Text = "Viewerの表示";
             this.button1.UseVisualStyleBackColor = true;
@@ -40,11 +40,11 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(12, 23);
+            this.button2.Location = new System.Drawing.Point(12, 41);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.Size = new System.Drawing.Size(140, 23);
             this.button2.TabIndex = 1;
-            this.button2.Text = "button2";
+            this.button2.Text = "FileDocumentのテスト";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
@@ -56,7 +56,7 @@
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
             this.Name = "XmlConfigTestWindow";
-            this.Text = "XmlConfigTestWindow";
+            this.Text = "TestWindow";
             this.ResumeLayout(false);
 
         }

@@ -149,7 +149,7 @@ namespace Kucl.Collections {
         /// </summary>
         /// <param name="values"></param>
         public void AddRange(IList<T> values) {
-            for (int i = 0; i < values.Count; i++) {
+            for (int i = 0; i < (values?.Count ?? 0); i++) {
                 this.Add(values[i]);
             }
         }

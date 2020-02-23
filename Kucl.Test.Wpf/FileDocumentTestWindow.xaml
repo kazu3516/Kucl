@@ -1,0 +1,30 @@
+﻿<Window x:Class="Kucl.Test.Wpf.FileDocumentTestWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Kucl.Test.Wpf"
+        mc:Ignorable="d"
+        Title="FileDocumentTestWindow" Height="450" Width="800">
+    <Window.DataContext>
+        <local:FileDocumentTestWindowViewModel/>
+    </Window.DataContext>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="AUTO"/>
+        </Grid.RowDefinitions>
+        <Menu Grid.Row="0">
+            <MenuItem Header="ファイル(_F)" Height="20">
+                <MenuItem Header="新規作成(_N)" Height="20" Command="{Binding NewDocumentCommand, Mode=OneWay}"/>
+                <MenuItem Header="開く(_O)" Height="20" Command="{Binding OpenFileCommand, Mode=OneWay}"/>
+                <MenuItem Header="上書き保存(_S)" Height="20" Command="{Binding SaveFileCommand, Mode=OneWay}"/>
+                <MenuItem Header="名前を付けて保存(_A)" Height="20" Command="{Binding SaveAsCommand, Mode=OneWay}"/>
+                <Separator/>
+                <MenuItem Header="終了(_X)" Height="20"/>
+            </MenuItem>
+        </Menu>
+        <TextBox Margin="0,0,0,-397" Grid.Row="1" TextWrapping="Wrap" Text="{Binding Text.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True"/>
+
+    </Grid>
+</Window>

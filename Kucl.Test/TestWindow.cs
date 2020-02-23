@@ -3,20 +3,22 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Kucl.Xml;
 using Kucl.Xml.XmlCfg;
 namespace Kucl.Test {
-    public partial class XmlConfigTestWindow : Form {
+    public partial class TestWindow : Form {
 
-        public XmlConfigTestWindow() {
+        public TestWindow() {
             InitializeComponent();
         }
 
         private void button2_Click(object sender, EventArgs e) {
-
+            FileDocumentTestWindow window = new FileDocumentTestWindow();
+            window.Show();
         }
 
         private void button1_Click(object sender, EventArgs e) {

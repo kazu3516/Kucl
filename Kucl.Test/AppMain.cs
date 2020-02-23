@@ -105,7 +105,7 @@ namespace Kucl.Test {
             this.m_AppInfo = new AppInfo();
 
             //Window
-            XmlConfigTestWindow form = new XmlConfigTestWindow();
+            TestWindow form = new TestWindow();
             this.MainWindow = form;
 
 

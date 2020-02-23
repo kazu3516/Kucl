@@ -54,3 +54,8 @@
 1.2.0.0
 　XmlContentsModelのシリアル化をVersionにより切り替えられるように変更。
 　これにより、古いフォーマットのXmlContentsModelを読み込むことが可能になった。
+
+1.3.0.0
+  FileDocumentクラスをWPF対応とするため、OpenFileDialog、SaveFileDialog、MessageBoxを使用している箇所をイベント処理に変更したFileDocumentBaseクラスを作成
+  FileDocumentクラスはこのクラスを継承し、WindowsForm用クラスとする。
+  WPFにて使用する場合、FileDocumentBaseクラスから直接継承し、RequestOpenFileDialog、RequestSaveFileDialog、RequestConfirmCloseMessageDialogイベントに対応するイベントハンドラにてViewへのMessage送信経由でダイアログを表示する。
