@@ -508,31 +508,61 @@ namespace Kucl {
         }
 
         #region イベント
-
+        /// <summary>
+        /// OpenFileDialogの表示要求が発生した時に動作するイベントです。
+        /// </summary>
         public event FileDialogEventHandler RequestOpenFileDialog;
-        protected void OnRequestOpenFileDialog(FileDialogEventArgs e) {
+        /// <summary>
+        /// RequestOpenFileDialogイベントを発生させます。
+        /// </summary>
+        /// <param name="e"></param>
+        protected virtual void OnRequestOpenFileDialog(FileDialogEventArgs e) {
             this.RequestOpenFileDialog?.Invoke(this,e);
         }
 
-
+        /// <summary>
+        /// SaveFileDialogの表示要求が発生した時に動作するイベントです。
+        /// </summary>
         public event FileDialogEventHandler RequestSaveFileDialog;
-        protected void OnRequestSaveFileDialog(FileDialogEventArgs e) {
+        /// <summary>
+        /// RequestSaveFileDialogイベントを発生させます。
+        /// </summary>
+        /// <param name="e"></param>
+        protected virtual void OnRequestSaveFileDialog(FileDialogEventArgs e) {
             this.RequestSaveFileDialog?.Invoke(this,e);
         }
 
-
+        /// <summary>
+        /// ConfirmCloseMessageDialogの表示要求が発生した時に動作するイベントです。
+        /// </summary>
         public event MessageBoxEventHandler RequestConfirmCloseMessageDialog;
-        protected void OnRequestConfirmCloseMessageDialog(MessageBoxEventArgs e) {
+        /// <summary>
+        /// RequestConfirmCloseMessageDialogイベントを発生させます。
+        /// </summary>
+        /// <param name="e"></param>
+        protected virtual void OnRequestConfirmCloseMessageDialog(MessageBoxEventArgs e) {
             this.RequestConfirmCloseMessageDialog?.Invoke(this,e);
         }
         #endregion
 
+        /// <summary>
+        /// RequestOpenFileDialogイベントを発生させます。
+        /// </summary>
+        /// <param name="e"></param>
         public void RaiseRequestOpenFileDialog(FileDialogEventArgs e) {
             this.OnRequestOpenFileDialog(e);
         }
+        /// <summary>
+        /// RequestSaveFileDialogイベントを発生させます。
+        /// </summary>
+        /// <param name="e"></param>
         public void RaiseRequestSaveFileDialog(FileDialogEventArgs e) {
             this.OnRequestSaveFileDialog(e);
         }
+        /// <summary>
+        /// RequestConfirmCloseMessageDialogイベントを発生させます。
+        /// </summary>
+        /// <param name="e"></param>
 
         public void RaiseRequestConfirmCloseMessageDialog(MessageBoxEventArgs e) {
             this.OnRequestConfirmCloseMessageDialog(e);
