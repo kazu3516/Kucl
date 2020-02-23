@@ -58,7 +58,8 @@ namespace Kucl {
         }
 
         private void FileDocument_RequestSaveFileDialog(object sender,FileDialogEventArgs e) {
-            this.saveFileDialog.Filter = this.Filter;
+            this.saveFileDialog.Filter = e.Filter;
+            this.saveFileDialog.FilterIndex = e.FilterIndex;
             if(this.saveFileDialog.ShowDialog() == DialogResult.OK) {
                 e.FileName = this.saveFileDialog.FileName;
             }
@@ -67,7 +68,8 @@ namespace Kucl {
             }
         }
         private void FileDocument_RequestOpenFileDialog(object sender,FileDialogEventArgs e) {
-            this.openFileDialog.Filter = this.Filter;
+            this.openFileDialog.Filter = e.Filter;
+            this.openFileDialog.FilterIndex = e.FilterIndex;
             if(this.openFileDialog.ShowDialog() == DialogResult.OK) {
                 e.FileName = this.openFileDialog.FileName;
             }
@@ -90,9 +92,32 @@ namespace Kucl {
                 m_Filter = value;
             }
         }
-
+        /// <summary>
+        /// FilterIndexを取得または設定します。
+        /// </summary>
+        public int FilterIndex {
+            get;set;
+        }
         #endregion
 
+        /// <summary>
+        /// OnRequestOpenFileDialogメソッドをオーバーライドします。
+        /// </summary>
+        /// <param name="e"></param>
+        protected override void OnRequestOpenFileDialog(FileDialogEventArgs e) {
+            e.Filter = this.Filter;
+            e.FilterIndex = this.FilterIndex;
+            base.OnRequestOpenFileDialog(e);
+        }
+        /// <summary>
+        /// OnRequestSaveFileDialogメソッドをオーバーライドします。
+        /// </summary>
+        /// <param name="e"></param>
+        protected override void OnRequestSaveFileDialog(FileDialogEventArgs e) {
+            e.Filter = this.Filter;
+            e.FilterIndex = this.FilterIndex;
+            base.OnRequestSaveFileDialog(e);
+        }
     }
     #endregion
 
@@ -484,6 +509,12 @@ namespace Kucl {
         public string Filter {
             get;set;
         }
+        /// <summary>
+        /// FilterIndexを取得または設定します。
+        /// </summary>
+        public int FilterIndex {
+            get;set;
+        }
         #endregion
 
         #region コンストラクタ
@@ -546,6 +577,7 @@ namespace Kucl {
 
     #endregion
 
+    #region MessageBoxResult
     /// <summary>
     /// MessageBoxの結果を表す列挙型です。
     /// </summary>
@@ -582,7 +614,8 @@ namespace Kucl {
         /// Retry(再試行)
         /// </summary>
         Retry,
-    }
+    } 
+    #endregion
 
     #region FileDocumentDialogService
 

@@ -88,13 +88,13 @@ namespace Kucl.Test.Wpf {
 
         private void Document_RequestSaveFileDialog(object sender,FileDialogEventArgs e) {
             var service = FileDocumentDialogService.GetService("Kucl.Test.Wpf");
-            e.Filter = "テキストファイル(*.txt)|*.txt";
+            e.Filter = "テキストファイル(*.txt)|*.txt|全てのファイル(*.*)|*.*";
             service.RaiseRequestSaveFileDialog(e);
         }
 
         private void Document_RequestOpenFileDialog(object sender,FileDialogEventArgs e) {
             var service = FileDocumentDialogService.GetService("Kucl.Test.Wpf");
-            e.Filter = "テキストファイル(*.txt)|*.txt";
+            e.Filter = "テキストファイル(*.txt)|*.txt|全てのファイル(*.*)|*.*";
             service.RaiseRequestOpenFileDialog(e);
         }
 
@@ -164,6 +164,10 @@ namespace Kucl.Test.Wpf {
 
         protected override void OnCloseDocument() {
             this.TestData = "";
+        }
+
+        protected override void OnRequestOpenFileDialog(FileDialogEventArgs e) {
+            base.OnRequestOpenFileDialog(e);
         }
     }
 }

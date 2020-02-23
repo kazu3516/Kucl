@@ -29,6 +29,7 @@ namespace Kucl.Test.Wpf {
         private void Service_RequestSaveFileDialog(object sender,FileDialogEventArgs e) {
             var dialog = new SaveFileDialog();
             dialog.Filter = e.Filter;
+            dialog.FilterIndex = e.FilterIndex;
             dialog.FileName = e.FileName;
             if(dialog.ShowDialog() == true) {
                 e.FileName = dialog.FileName;
@@ -41,6 +42,7 @@ namespace Kucl.Test.Wpf {
         private void Service_RequestOpenFileDialog(object sender,FileDialogEventArgs e) {
             var dialog = new OpenFileDialog();
             dialog.Filter = e.Filter;
+            dialog.FilterIndex = e.FilterIndex;
             dialog.FileName = e.FileName;
             if(dialog.ShowDialog() == true) {
                 e.FileName = dialog.FileName;
