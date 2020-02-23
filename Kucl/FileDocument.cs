@@ -97,6 +97,12 @@ namespace Kucl {
     #endregion
 
     #region FileDocumentBase
+    /// <summary>
+    /// ドキュメント処理を行うための機能を提供するクラスです。
+    /// <para>WindowsFormアプリケーションで使用する場合、FileDocumentクラスを使用してください。
+    /// WPFで使用する場合、このクラスを継承し、DialogServiceを実装してください。
+    /// </para>
+    /// </summary>
     public abstract class FileDocumentBase : IDisposable {
 
         #region メンバ変数
@@ -135,7 +141,10 @@ namespace Kucl {
 
         #region IDisposable Support
         private bool disposedValue = false; // 重複する呼び出しを検出するには
-
+        /// <summary>
+        /// このオブジェクトが保持するリソースを破棄します。
+        /// </summary>
+        /// <param name="disposing">マネージドリソースを破棄する場合true。アンマネージドリソースのみを破棄する場合falseを指定します。</param>
         protected virtual void Dispose(bool disposing) {
             if(!disposedValue) {
                 if(disposing) {
@@ -157,6 +166,9 @@ namespace Kucl {
         // }
 
         // このコードは、破棄可能なパターンを正しく実装できるように追加されました。
+        /// <summary>
+        /// このオブジェクトが保持するリソースを破棄します。
+        /// </summary>
         public void Dispose() {
             // このコードを変更しないでください。クリーンアップ コードを上の Dispose(bool disposing) に記述します。
             Dispose(true);
@@ -168,21 +180,39 @@ namespace Kucl {
         #endregion
 
         #region イベント
-
+        /// <summary>
+        /// OpenFileDialogの表示要求が発生した時に動作するイベントです。
+        /// </summary>
         public event FileDialogEventHandler RequestOpenFileDialog;
-        protected void OnRequestOpenFileDialog(FileDialogEventArgs e) {
+        /// <summary>
+        /// RequestOpenFileDialogイベントを発生させます。
+        /// </summary>
+        /// <param name="e"></param>
+        protected virtual void OnRequestOpenFileDialog(FileDialogEventArgs e) {
             this.RequestOpenFileDialog?.Invoke(this,e);
         }
 
-
+        /// <summary>
+        /// SaveFileDialogの表示要求が発生した時に動作するイベントです。
+        /// </summary>
         public event FileDialogEventHandler RequestSaveFileDialog;
-        protected void OnRequestSaveFileDialog(FileDialogEventArgs e) {
+        /// <summary>
+        /// RequestSaveFileDialogイベントを発生させます。
+        /// </summary>
+        /// <param name="e"></param>
+        protected virtual void OnRequestSaveFileDialog(FileDialogEventArgs e) {
             this.RequestSaveFileDialog?.Invoke(this,e);
         }
 
-
+        /// <summary>
+        /// ConfirmCloseMessageDialogの表示要求が発生した時に動作するイベントです。
+        /// </summary>
         public event MessageBoxEventHandler RequestConfirmCloseMessageDialog;
-        protected void OnRequestConfirmCloseMessageDialog(MessageBoxEventArgs e) {
+        /// <summary>
+        /// RequestConfirmCloseMessageDialogイベントを発生させます。
+        /// </summary>
+        /// <param name="e"></param>
+        protected virtual void OnRequestConfirmCloseMessageDialog(MessageBoxEventArgs e) {
             this.RequestConfirmCloseMessageDialog?.Invoke(this,e);
         }
         #endregion
@@ -422,25 +452,44 @@ namespace Kucl {
 
 
     #region FileDialogEvent
-
+    /// <summary>
+    /// FileDialogEventで使用するDelegate
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     public delegate void FileDialogEventHandler(object sender,FileDialogEventArgs e);
 
     #region FileDialogEventArgs
+    /// <summary>
+    /// FileDialogEventで使用するEventArgs
+    /// </summary>
     public class FileDialogEventArgs : EventArgs {
 
         #region メンバ変数/プロパティ
+        /// <summary>
+        /// FileNameを取得、または設定します。
+        /// </summary>
         public string FileName {
             get; set;
         }
+        /// <summary>
+        /// Canceledを取得または設定します。
+        /// </summary>
         public bool Canceled {
             get; set;
         }
+        /// <summary>
+        /// Filterを取得または設定します。
+        /// </summary>
         public string Filter {
             get;set;
         }
         #endregion
 
         #region コンストラクタ
+        /// <summary>
+        /// FileDialogEventArgsクラスの新しいインスタンスを初期化します。
+        /// </summary>
         public FileDialogEventArgs() : base() {
         }
         #endregion
@@ -450,25 +499,44 @@ namespace Kucl {
     #endregion
 
     #region MessageBoxEvent
-
+    /// <summary>
+    /// MessageBoxEventで使用するDelegate
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     public delegate void MessageBoxEventHandler(object sender,MessageBoxEventArgs e);
 
     #region MessageBoxEventArgs
+    /// <summary>
+    /// MessageBoxEventで使用するEventArgs
+    /// </summary>
     public class MessageBoxEventArgs : EventArgs {
 
         #region メンバ変数/プロパティ
+        /// <summary>
+        /// Messageを取得または設定します。
+        /// </summary>
         public string Message {
             get; set;
         }
+        /// <summary>
+        /// Titleを取得または設定します。
+        /// </summary>
         public string Title {
             get; set;
         }
+        /// <summary>
+        /// Resultを取得または設定します。
+        /// </summary>
         public MessageBoxResult Result {
             get; set;
         }
         #endregion
 
         #region コンストラクタ
+        /// <summary>
+        /// MessageBoxEventArgsクラスの新しいインスタンスを初期化します。
+        /// </summary>
         public MessageBoxEventArgs() : base() {
 
         }
@@ -478,22 +546,57 @@ namespace Kucl {
 
     #endregion
 
+    /// <summary>
+    /// MessageBoxの結果を表す列挙型です。
+    /// </summary>
     public enum MessageBoxResult {
+        /// <summary>
+        /// None
+        /// </summary>
         None,
+        /// <summary>
+        /// OK
+        /// </summary>
         OK,
+        /// <summary>
+        /// Cancel
+        /// </summary>
         Cancel,
+        /// <summary>
+        /// Yes(はい)
+        /// </summary>
         Yes,
+        /// <summary>
+        /// No(いいえ)
+        /// </summary>
         No,
+        /// <summary>
+        /// Abort(中止)
+        /// </summary>
         Abort,
+        /// <summary>
+        /// Ignore(無視)
+        /// </summary>
         Ignore,
+        /// <summary>
+        /// Retry(再試行)
+        /// </summary>
         Retry,
     }
 
     #region FileDocumentDialogService
 
+    /// <summary>
+    /// WPFでFileDocumentBaseを使用するために、ViewModelとViewの通信を行うServiceクラスです。
+    /// </summary>
     public class FileDocumentDialogService {
 
         private static Dictionary<string,FileDocumentDialogService> table = new Dictionary<string,FileDocumentDialogService>();
+        /// <summary>
+        /// 識別子を指定してServiceを取得します。
+        /// </summary>
+        /// <param name="identifer"></param>
+        /// <returns></returns>
         public static FileDocumentDialogService GetService(string identifer) {
             if(!table.ContainsKey(identifer)) {
                 table.Add(identifer,new FileDocumentDialogService());
